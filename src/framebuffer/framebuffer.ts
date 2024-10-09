@@ -1,4 +1,4 @@
-import { BufferMode, Texture2D } from '../texture/texture2D';
+import { BufferMode, Texture2D } from '../texture';
 import { GL } from '../gl';
 import { vec2 } from 'gl-matrix';
 
