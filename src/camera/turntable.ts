@@ -1,4 +1,4 @@
-import { cartesianToGcs, clampLatitude, clampLongitude, gcsToCartesian } from '../data/management/gcs';
+import { cartesianToGcs, clampLatitude, clampLongitude, gcsToCartesian } from '../data/conversion/gcs';
 import { Camera } from './camera';
 import { vec3 } from 'gl-matrix';
 

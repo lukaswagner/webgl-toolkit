@@ -1,4 +1,4 @@
-import { gcsToCartesian } from '../management/gcs';
+import { gcsToCartesian } from '../conversion/gcs';
 import { vec3 } from 'gl-matrix';
 
 class Options {
@@ -14,7 +14,7 @@ class Options {
  * @param options allows customizing the properties of the sphere
  * @returns point data as packed array
  */
-export function sphere(options?: Partial<Options>) {
+export function spherePoints(options?: Partial<Options>) {
     options = Object.assign(new Options(), options) as Options;
     if (typeof options.radius === 'number')
         options.radius = vec3.fromValues(options.radius, options.radius, options.radius);

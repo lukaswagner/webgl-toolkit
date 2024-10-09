@@ -7,7 +7,7 @@ export interface TextureFormat {
 /**
  * Helper for matching format/type/internalformat texture settings.
  */
-export namespace Formats {
+export namespace TextureFormats {
     export const R: TextureFormat = {
         format: WebGL2RenderingContext.RED,
         type: WebGL2RenderingContext.UNSIGNED_BYTE,
