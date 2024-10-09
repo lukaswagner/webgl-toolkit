@@ -5,7 +5,9 @@ import { RenderPass } from './renderPass';
 
 export abstract class ShaderRenderPass<T extends DirtyInit> extends RenderPass<T> {
     protected _vert: WebGLShader;
+    protected _vertCompiled = false;
     protected _frag: WebGLShader;
+    protected _fragCompiled = false;
     protected _program: WebGLProgram;
     protected _uniforms: Uniforms;
 
@@ -16,15 +18,21 @@ export abstract class ShaderRenderPass<T extends DirtyInit> extends RenderPass<T
     protected compileVert(src: string) {
         this._gl.shaderSource(this._vert, src);
         this._gl.compileShader(this._vert);
-        if (!this._gl.getShaderParameter(this._vert, this._gl.COMPILE_STATUS))
+        this._vertCompiled = this._gl.getShaderParameter(this._vert, this._gl.COMPILE_STATUS);
+        if (!this._vertCompiled) {
             console.log(this._gl.getShaderInfoLog(this._vert));
+            console.log(src);
+        }
     }
 
     protected compileFrag(src: string) {
         this._gl.shaderSource(this._frag, src);
         this._gl.compileShader(this._frag);
-        if (!this._gl.getShaderParameter(this._frag, this._gl.COMPILE_STATUS))
+        this._fragCompiled = this._gl.getShaderParameter(this._frag, this._gl.COMPILE_STATUS);
+        if (!this._fragCompiled) {
             console.log(this._gl.getShaderInfoLog(this._frag));
+            console.log(src);
+        }
     }
 
     protected setupProgram() {
@@ -36,6 +44,10 @@ export abstract class ShaderRenderPass<T extends DirtyInit> extends RenderPass<T
     }
 
     protected linkProgram() {
+        if(!this._vertCompiled)
+            console.log('vertex shader not compiled, skipping linking');
+        if(!this._fragCompiled)
+            console.log('fragment shader not compiled, skipping linking');
         this._gl.linkProgram(this._program);
         if (!this._gl.getProgramParameter(this._program, this._gl.LINK_STATUS))
             console.log(this._gl.getProgramInfoLog(this._program));
