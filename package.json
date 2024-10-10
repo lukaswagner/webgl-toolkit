@@ -4,9 +4,13 @@
     "description": "",
     "main": "build/webgl-toolkit.js",
     "types": "build/types",
+    "files": [
+        "build"
+    ],
     "scripts": {
         "build": "webpack build --mode production",
-        "build-dev": "webpack build --mode development"
+        "build-dev": "webpack build --mode development",
+        "prepack": "npm run build"
     },
     "repository": {
         "type": "git",
