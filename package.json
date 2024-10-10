@@ -2,10 +2,10 @@
     "name": "@lukaswagner/webgl-toolkit",
     "version": "0.1.0",
     "description": "",
-    "main": "build/webgl-toolkit.js",
-    "types": "build/types",
+    "main": "lib/webgl-toolkit.js",
+    "types": "lib/types",
     "files": [
-        "build"
+        "lib"
     ],
     "scripts": {
         "build": "webpack build --mode production",

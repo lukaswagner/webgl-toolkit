@@ -4,7 +4,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const baseDir = dirname(fileURLToPath(import.meta.url));
-const buildDir = resolve(baseDir, 'build');
+const buildDir = resolve(baseDir, 'lib');
 
 /**
  * @returns {import("webpack").Configuration}
@@ -25,9 +25,6 @@ export default function () {
         },
         resolve: {
             extensions: ['.ts', '...'],
-            alias: {
-                shaders: resolve(baseDir, 'src/shaders/'),
-            }
         },
         module: {
             rules: [
@@ -40,10 +37,6 @@ export default function () {
                     use: {
                         loader: 'webpack-glsl-loader'
                     },
-                },
-                {
-                    test: /\.obj$/,
-                    type: 'asset/source',
                 },
             ]
         },
