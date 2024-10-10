@@ -29,7 +29,6 @@
         "gl-matrix": "^3.4.3"
     },
     "devDependencies": {
-        "@types/gl-matrix": "^3.2.0",
         "@typescript-eslint/eslint-plugin": "^8.8.1",
         "@typescript-eslint/parser": "^8.8.1",
         "eslint": "^9.12.0",
