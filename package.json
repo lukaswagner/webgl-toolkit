@@ -1,43 +1,7 @@
 {
-    "name": "@lukaswagner/webgl-toolkit",
-    "version": "0.1.0",
-    "description": "",
-    "main": "lib/webgl-toolkit.js",
-    "types": "lib/types",
-    "files": [
-        "lib"
-    ],
+    "name": "webgl-toolkit",
+    "workspaces": ["lib"],
     "scripts": {
-        "build": "webpack build --mode production",
-        "build-dev": "webpack build --mode development",
-        "prepack": "npm run build",
         "lint": "eslint"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/lukaswagner/webgl-toolkit.git"
-    },
-    "keywords": [
-        "WebGL"
-    ],
-    "author": "Lukas Wagner",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/lukaswagner/webgl-toolkit/issues"
-    },
-    "homepage": "https://github.com/lukaswagner/webgl-toolkit#readme",
-    "dependencies": {
-        "gl-matrix": "^3.4.3"
-    },
-    "devDependencies": {
-        "@stylistic/eslint-plugin": "^2.9.0",
-        "@typescript-eslint/eslint-plugin": "^8.11.0",
-        "@typescript-eslint/parser": "^8.11.0",
-        "eslint": "^9.13.0",
-        "ts-loader": "^9.5.1",
-        "typescript": "^5.6.3",
-        "webpack": "^5.95.0",
-        "webpack-cli": "^5.1.4",
-        "webpack-glsl-loader": "^1.0.1"
     }
 }

@@ -4,9 +4,9 @@ import tsParser from '@typescript-eslint/parser';
 
 export default [
     {
-        ignores: ['lib/*'],
+        ignores: ['*/build/*'],
     },
-    // eslint recommended as warnings plus some extensions
+    // eslint recommended as warnings plus some tweaks
     {
         rules: {
             'array-callback-return': 'warn',
@@ -85,7 +85,7 @@ export default [
             'valid-typeof': 'warn',
         },
     },
-    // st recommended as warnings plus some extensions
+    // stylistic recommended as warnings plus some tweaks
     {
         plugins: {
             '@st': st,
@@ -147,21 +147,24 @@ export default [
             '@st/yield-star-spacing': ['warn', 'both'],
         },
     },
-    // ts strictTypeChecked as warnings
+    // tsconfig for lib
     {
-        files: ['**/*.ts'],
-        plugins: {
-            '@ts': ts,
-        },
+        files: ['lib/**/*.ts'],
         languageOptions: {
             parser: tsParser,
             ecmaVersion: 5,
             sourceType: 'script',
             parserOptions: {
-                project: ['./tsconfig.json'],
+                project: ['lib/tsconfig.json'],
             },
         },
-        // todo: unroll base and eslint-recommended
+    },
+    // typescript-eslint strictTypeChecked as warnings plus some tweaks
+    {
+        files: ['**/*.ts'],
+        plugins: {
+            '@ts': ts,
+        },
         rules: {
             'constructor-super': 'off',
             'getter-return': 'off',
