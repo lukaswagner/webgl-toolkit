@@ -27,6 +27,11 @@ export class Texture2D {
         this._handle = this._gl.createTexture();
         if (this._bufferMode === BufferMode.Double)
             this._double = this._gl.createTexture();
+
+        // set a default value to avoid incomplete framebuffers
+        this.minFilter = this._gl.NEAREST;
+        this.magFilter = this._gl.NEAREST;
+
         this.resize([1, 1]);
     }
 
@@ -82,11 +87,25 @@ export class Texture2D {
         this.bind();
         this._gl.texParameteri(this._gl.TEXTURE_2D, this._gl.TEXTURE_MIN_FILTER, v);
         this.unbind();
+        if (this._bufferMode === BufferMode.Double) {
+            this.swap();
+            this.bind();
+            this._gl.texParameteri(this._gl.TEXTURE_2D, this._gl.TEXTURE_MIN_FILTER, v);
+            this.unbind();
+            this.swap();
+        }
     }
 
     public set magFilter(v: GLenum) {
         this.bind();
         this._gl.texParameteri(this._gl.TEXTURE_2D, this._gl.TEXTURE_MAG_FILTER, v);
         this.unbind();
+        if (this._bufferMode === BufferMode.Double) {
+            this.swap();
+            this.bind();
+            this._gl.texParameteri(this._gl.TEXTURE_2D, this._gl.TEXTURE_MAG_FILTER, v);
+            this.unbind();
+            this.swap();
+        }
     }
 }
