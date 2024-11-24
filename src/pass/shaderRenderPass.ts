@@ -1,7 +1,7 @@
-import { Dirty, DirtyInit } from '../data';
+import { DirtyInit } from '../data';
 import { GL } from '../gl';
-import { Uniforms } from '../shader';
 import { RenderPass } from './renderPass';
+import { Uniforms } from '../shader';
 
 export abstract class ShaderRenderPass<T extends DirtyInit> extends RenderPass<T> {
     protected _vert: WebGLShader;
@@ -44,9 +44,9 @@ export abstract class ShaderRenderPass<T extends DirtyInit> extends RenderPass<T
     }
 
     protected linkProgram() {
-        if(!this._vertCompiled)
+        if (!this._vertCompiled)
             console.log('vertex shader not compiled, skipping linking');
-        if(!this._fragCompiled)
+        if (!this._fragCompiled)
             console.log('fragment shader not compiled, skipping linking');
         this._gl.linkProgram(this._program);
         if (!this._gl.getProgramParameter(this._program, this._gl.LINK_STATUS))

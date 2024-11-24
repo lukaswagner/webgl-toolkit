@@ -1,4 +1,4 @@
-import { vec2 } from "gl-matrix";
+import { vec2 } from 'gl-matrix';
 
 /**
  * Generates a halton sequence, useful e.g. for TAA samples.
@@ -9,7 +9,7 @@ import { vec2 } from "gl-matrix";
  * @returns the calculated sequence
  */
 export function halton1d(base: number, count: number, skip = 0) {
-    if(base < 2) {
+    if (base < 2) {
         const result = new Array<number>(count);
         result.fill(0);
         return result;
@@ -17,18 +17,18 @@ export function halton1d(base: number, count: number, skip = 0) {
     const results = new Array<number>();
     let numerator = 0;
     let denominator = 1;
-    for(let i = 0; i < count + skip; i++) {
+    for (let i = 0; i < count + skip; i++) {
         const diff = denominator - numerator;
-        if(diff === 1) {
+        if (diff === 1) {
             numerator = 1;
             denominator *= base;
         } else {
             let ratio = denominator / base;
-            while(diff <= ratio)
+            while (diff <= ratio)
                 ratio = Math.trunc(ratio / base);
             numerator = (base + 1) * ratio - diff;
         }
-        if(i >= skip)
+        if (i >= skip)
             results.push(numerator / denominator);
     }
     return results;

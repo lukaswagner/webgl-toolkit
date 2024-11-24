@@ -4,10 +4,10 @@ export type DirtyInit = Record<any, boolean>;
  * Helper for tracking changes, e.g. to a render pass' data.
  */
 export class Dirty<T extends DirtyInit> {
-    protected _map: {[K in keyof T]: boolean};
+    protected _map: { [K in keyof T]: boolean };
     protected _any = false;
 
-    constructor(init: T) {
+    public constructor(init: T) {
         this._map = {} as typeof this._map;
         for (const key in init) this._map[key] = init[key];
     }

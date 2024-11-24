@@ -17,7 +17,7 @@
  */
 export function replaceDefines(
     src: string,
-    values: { key: string, value: { toString(): string }, suffix?: string}[]
+    values: { key: string; value: { toString(): string }; suffix?: string }[]
 ) {
     let result = src;
     values.forEach((v) => {

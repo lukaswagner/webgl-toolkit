@@ -10,7 +10,7 @@ export class CanvasFramebuffer extends Framebuffer {
     protected _canvas: HTMLCanvasElement | OffscreenCanvas;
 
     protected constructor(gl: GL) {
-        super(gl, "Canvas");
+        super(gl, 'Canvas');
     }
 
     public static getInstance(gl: GL) {

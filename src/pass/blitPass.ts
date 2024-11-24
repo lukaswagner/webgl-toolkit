@@ -1,13 +1,13 @@
-import { Framebuffer, drawBuffer } from '../framebuffer';
-import { RenderPass } from './renderPass';
+import { drawBuffer, Framebuffer } from '../framebuffer';
 import { GL } from '../gl';
+import { RenderPass } from './renderPass';
 
 const tracked = {
-    ReadTarget: false,
-    ReadBuffer: false,
-    DrawTarget: false,
-    DrawBuffer: false,
-}
+    ReadTarget: true,
+    ReadBuffer: true,
+    DrawTarget: true,
+    DrawBuffer: true,
+};
 
 export class BlitPass extends RenderPass<typeof tracked> {
     public constructor(gl: GL, name?: string) {

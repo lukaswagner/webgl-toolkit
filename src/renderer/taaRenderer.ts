@@ -1,9 +1,9 @@
-import { vec2 } from "gl-matrix";
-import { Renderer } from "./renderer";
-import { AccumulatePass, isJitterPass } from "../pass";
-import { Framebuffer } from "../framebuffer";
-import { halton2d } from "../data";
-import { Texture2D } from "../texture";
+import { AccumulatePass, isJitterPass } from '../pass';
+import { Framebuffer } from '../framebuffer';
+import { halton2d } from '../data';
+import { Renderer } from './renderer';
+import { Texture2D } from '../texture';
+import { vec2 } from 'gl-matrix';
 
 const tracked = {
     Size: true,
@@ -12,7 +12,7 @@ const tracked = {
     TaaNumFrames: true,
     TaaHaltonBase1: true,
     TaaHaltonBase2: true,
-}
+};
 type Tracked = typeof tracked;
 
 export class TaaRenderer<T extends Tracked = Tracked> extends Renderer<T> {
@@ -55,7 +55,7 @@ export class TaaRenderer<T extends Tracked = Tracked> extends Renderer<T> {
             this._dirty.get('TaaNumFrames') ||
             this._dirty.get('TaaHaltonBase1') ||
             this._dirty.get('TaaHaltonBase2');
-        if(taaSettingsChanged) {
+        if (taaSettingsChanged) {
             this._taaKernel = halton2d(
                 this._taaHaltonBase1,
                 this._taaHaltonBase2,
@@ -63,22 +63,21 @@ export class TaaRenderer<T extends Tracked = Tracked> extends Renderer<T> {
         }
 
         const cameraChanged = this._camera.timestamp > this._lastFrame;
-        if(taaSettingsChanged || cameraChanged || requestRedraw)
-        {
-            if(this._taaFrame > 0)
+        if (taaSettingsChanged || cameraChanged || requestRedraw) {
+            if (this._taaFrame > 0)
                 this._dirty.set('TaaFrame');
             this._taaFrame = 0;
             buffer.clear();
         }
 
-        if(this._dirty.get('TaaFrame')) {
-            let ndcOffset = this._taaFrame === 0 ?
+        if (this._dirty.get('TaaFrame')) {
+            const ndcOffset = this._taaFrame === 0 ?
                 vec2.create() :
                 vec2.clone(this._taaKernel[this._taaFrame - 1]);
 
             // loop around at 0.5 to -0.5
-            if(ndcOffset[0] > 0.5) ndcOffset[0] -= 1;
-            if(ndcOffset[1] > 0.5) ndcOffset[1] -= 1;
+            if (ndcOffset[0] > 0.5) ndcOffset[0] -= 1;
+            if (ndcOffset[1] > 0.5) ndcOffset[1] -= 1;
 
             for (const pass of this._passes) {
                 if (isJitterPass(pass)) {
@@ -93,9 +92,9 @@ export class TaaRenderer<T extends Tracked = Tracked> extends Renderer<T> {
     public draw(time: number) {
         super.draw(time);
 
-        if(this._taaEnabled) {
+        if (this._taaEnabled) {
             this._taaFrame++;
-            if(this._taaFrame < this._taaNumFrames)
+            if (this._taaFrame < this._taaNumFrames)
                 this._dirty.set('TaaFrame');
         }
     }

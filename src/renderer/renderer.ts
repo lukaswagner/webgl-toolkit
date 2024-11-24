@@ -1,13 +1,13 @@
-import { mat4, vec2 } from "gl-matrix";
-import { Dirty } from "../data";
-import { Camera } from "../camera";
-import { Framebuffer } from "../framebuffer";
-import { BlitPass, isCameraPass, RenderPass } from "../pass";
-import { Texture2D, TextureFormat, TextureFormats } from "../texture";
+import { BlitPass, isCameraPass, RenderPass } from '../pass';
+import { mat4, vec2 } from 'gl-matrix';
+import { Texture2D, TextureFormat, TextureFormats } from '../texture';
+import { Camera } from '../camera';
+import { Dirty } from '../data';
+import { Framebuffer } from '../framebuffer';
 
 const tracked = {
     Size: true,
-}
+};
 type Tracked = typeof tracked;
 
 export class Renderer<T extends Tracked = Tracked> {
@@ -35,7 +35,7 @@ export class Renderer<T extends Tracked = Tracked> {
         this._watchResize();
     };
 
-    public prepare(time: number) {
+    public prepare(_time: number) {
         let shouldRun = this._dirty.any();
 
         if (this._dirty.get('Size')) {
@@ -118,7 +118,12 @@ export class Renderer<T extends Tracked = Tracked> {
         return tex;
     }
 
-    protected _setupBlitPass(srcFbo: Framebuffer, srcBuffer: GLenum, dstFbo: Framebuffer, dstBuffer: GLenum) {
+    protected _setupBlitPass(
+        srcFbo: Framebuffer,
+        srcBuffer: GLenum,
+        dstFbo: Framebuffer,
+        dstBuffer: GLenum
+    ) {
         const pass = new BlitPass(this._gl);
         pass.readTarget = srcFbo;
         pass.readBuffer = srcBuffer;

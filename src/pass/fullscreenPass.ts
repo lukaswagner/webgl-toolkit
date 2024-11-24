@@ -1,11 +1,11 @@
+import { fullscreenFrag, fullscreenVert, replaceDefines } from '../shader';
 import { Framebuffer } from '../framebuffer';
 import { GL } from '../gl';
-import { fullscreenFrag, fullscreenVert, replaceDefines } from '../shader';
 import { ShaderRenderPass } from './shaderRenderPass';
 
 const tracked = {
     Target: true,
-}
+};
 type Tracked = typeof tracked;
 
 export enum FragmentLocation {
@@ -13,8 +13,8 @@ export enum FragmentLocation {
 }
 
 type Options = {
-    fragSrc?: string,
-}
+    fragSrc?: string;
+};
 
 export class FullscreenPass<T extends Tracked = Tracked> extends ShaderRenderPass<T> {
     protected _buffer: WebGLBuffer;
@@ -43,9 +43,9 @@ export class FullscreenPass<T extends Tracked = Tracked> extends ShaderRenderPas
     }
 
     protected compileFrag(src?: string) {
-        if(!src) src = fullscreenFrag;
+        if (!src) src = fullscreenFrag;
         src = replaceDefines(src, [
-            { key: 'COLOR_LOCATION', value: FragmentLocation.Color }
+            { key: 'COLOR_LOCATION', value: FragmentLocation.Color },
         ]);
         super.compileFrag(src);
     }

@@ -1,20 +1,20 @@
-import { GL } from "../gl";
-import { accumulateFrag } from "../shader";
-import { Texture2D } from "../texture";
-import { FullscreenPass } from "./fullscreenPass";
+import { accumulateFrag } from '../shader';
+import { FullscreenPass } from './fullscreenPass';
+import { GL } from '../gl';
+import { Texture2D } from '../texture';
 
 const tracked = {
-    Target: false,
-    Frame: false,
-    Input: false,
-}
+    Target: true,
+    Frame: true,
+    Input: true,
+};
 
 export class AccumulatePass extends FullscreenPass<typeof tracked> {
     protected _frame: number;
     protected _inputTex: Texture2D;
 
     public constructor(gl: GL, name?: string) {
-        super(gl, undefined, name);
+        super(gl, tracked, name);
     }
 
     public initialize(): boolean {
@@ -31,7 +31,7 @@ export class AccumulatePass extends FullscreenPass<typeof tracked> {
     public prepare(): boolean {
         if (this._dirty.get('Frame')) {
             this._gl.useProgram(this._program);
-            this._gl.uniform1f(this._uniforms.get("u_alpha"), 1 / (this._frame + 1));
+            this._gl.uniform1f(this._uniforms.get('u_alpha'), 1 / (this._frame + 1));
             this._gl.useProgram(null);
         }
         return super.prepare();
@@ -48,14 +48,12 @@ export class AccumulatePass extends FullscreenPass<typeof tracked> {
         super._tearDown();
     }
 
-    public set frame(v: number)
-    {
+    public set frame(v: number) {
         this._frame = v;
         this._dirty.set('Frame');
     }
 
-    public set input(v: Texture2D)
-    {
+    public set input(v: Texture2D) {
         this._inputTex = v;
         this._dirty.set('Input');
     }

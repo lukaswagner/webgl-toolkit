@@ -21,7 +21,7 @@ export default function () {
             library: {
                 name: 'webgl-toolkit',
                 type: 'umd',
-            }
+            },
         },
         resolve: {
             extensions: ['.ts', '...'],
@@ -35,13 +35,13 @@ export default function () {
                 {
                     test: /\.(glsl|vert|frag)$/,
                     use: {
-                        loader: 'webpack-glsl-loader'
+                        loader: 'webpack-glsl-loader',
                     },
                 },
-            ]
+            ],
         },
         externals: {
             'gl-matrix': 'gl-matrix',
-        }
-    }
+        },
+    };
 }
