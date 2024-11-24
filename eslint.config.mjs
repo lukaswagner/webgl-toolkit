@@ -159,6 +159,18 @@ export default [
             },
         },
     },
+    // tsconfig for examples
+    {
+        files: ['examples/**/*.ts'],
+        languageOptions: {
+            parser: tsParser,
+            ecmaVersion: 5,
+            sourceType: 'script',
+            parserOptions: {
+                project: ['examples/tsconfig.json'],
+            },
+        },
+    },
     // typescript-eslint strictTypeChecked as warnings plus some tweaks
     {
         files: ['**/*.ts'],
@@ -204,7 +216,7 @@ export default [
             '@ts/no-explicit-any': 'off',
             '@ts/no-extra-non-null-assertion': 'warn',
             '@ts/no-extraneous-class': 'warn',
-            '@ts/no-floating-promises': 'warn',
+            '@ts/no-floating-promises': 'off',
             '@ts/no-for-in-array': 'warn',
             'no-implied-eval': 'off',
             '@ts/no-implied-eval': 'warn',
