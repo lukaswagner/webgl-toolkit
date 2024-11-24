@@ -1,3 +1,4 @@
+export * from './auxiliary';
 export * from './camera';
 export * from './data';
 export * from './framebuffer';
