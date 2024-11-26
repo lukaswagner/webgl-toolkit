@@ -7,5 +7,6 @@
         "lib": ["ES2022", "DOM"],
         "declaration": true,
         "declarationDir": "build/types",
+        "declarationMap": true,
     }
 }
