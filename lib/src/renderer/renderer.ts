@@ -1,6 +1,6 @@
 import { BlitPass, isCameraPass, RenderPass } from '../pass';
+import { BufferMode, Texture2D, TextureFormat, TextureFormats } from '../texture';
 import { mat4, vec2 } from 'gl-matrix';
-import { Texture2D, TextureFormat, TextureFormats } from '../texture';
 import { Camera } from '../camera';
 import { Dirty } from '../data';
 import { Framebuffer } from '../framebuffer';
@@ -112,9 +112,9 @@ export class Renderer<T extends Tracked = Tracked> {
         return { fbo, texture };
     }
 
-    protected _createTex(format: TextureFormat) {
+    protected _createTex(format: TextureFormat, bufferMode = BufferMode.Single) {
         const tex = new Texture2D(this._gl);
-        tex.initialize(format);
+        tex.initialize(format, bufferMode);
         return tex;
     }
 

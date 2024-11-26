@@ -1,9 +1,7 @@
 #version 300 es
 precision mediump float;
 
-#define COLOR_LOCATION 0
-
-layout(location = COLOR_LOCATION) out vec4 f_color;
+layout(location = 0) out vec4 f_color;
 
 uniform sampler2D u_input;
 
