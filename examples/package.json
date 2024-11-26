@@ -3,7 +3,7 @@
     "scripts": {
         "build": "webpack build --mode production",
         "build-dev": "webpack build --mode development",
-        "watch": "webpack serve --mode development"
+        "serve": "webpack serve --mode development"
     },
     "devDependencies": {
         "@lukaswagner/webgl-toolkit": "^0.1.0",

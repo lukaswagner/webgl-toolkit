@@ -10,6 +10,7 @@
     "scripts": {
         "build": "webpack build --mode production",
         "build-dev": "webpack build --mode development",
+        "watch": "webpack watch --mode development",
         "prepack": "npm run build"
     },
     "repository": {

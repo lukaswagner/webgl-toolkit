@@ -1,13 +1,21 @@
 {
     "name": "webgl-toolkit",
-    "workspaces": ["lib", "examples"],
+    "workspaces": [
+        "lib",
+        "examples"
+    ],
     "scripts": {
-        "lint": "eslint"
+        "build": "npm run build -w lib && npm run build -w examples",
+        "dev": "concurrently npm:lib:watch npm:ex:serve",
+        "lint": "eslint",
+        "lib:watch": "npm run watch -w lib",
+        "ex:serve": "npm run serve -w examples"
     },
     "devDependencies": {
         "@stylistic/eslint-plugin": "^2.9.0",
         "@typescript-eslint/eslint-plugin": "^8.11.0",
         "@typescript-eslint/parser": "^8.11.0",
+        "concurrently": "^9.1.0",
         "eslint": "^9.13.0"
     }
 }
