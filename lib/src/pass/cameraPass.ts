@@ -1,14 +1,18 @@
 import { mat4 } from 'gl-matrix';
 
+export type CameraMatrices = {
+    view: mat4;
+    projection: mat4;
+    viewProjection: mat4;
+    viewInverse: mat4;
+    projectionInverse: mat4;
+    viewProjectionInverse: mat4;
+};
+
 export interface CameraPass {
-    set view(v: mat4);
-    set projection(v: mat4);
-    set viewProjection(v: mat4);
-    set viewInverse(v: mat4);
-    set projectionInverse(v: mat4);
-    set viewProjectionInverse(v: mat4);
+    set cameraMatrices(m: CameraMatrices);
 }
 
 export function isCameraPass(obj: object): obj is CameraPass {
-    return 'view' in obj && 'projection' in obj;
+    return 'cameraMatrices' in obj;
 }

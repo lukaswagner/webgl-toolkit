@@ -55,12 +55,10 @@ export class Renderer<T extends Tracked = Tracked> {
             const viewProjectionInverse = mat4.invert(mat4.create(), viewProjection);
             for (const pass of this._passes) {
                 if (isCameraPass(pass)) {
-                    pass.view = view;
-                    pass.projection = projection;
-                    pass.viewProjection = viewProjection;
-                    pass.viewInverse = viewInverse;
-                    pass.projectionInverse = projectionInverse;
-                    pass.viewProjectionInverse = viewProjectionInverse;
+                    pass.cameraMatrices = {
+                        view, projection, viewProjection,
+                        viewInverse, projectionInverse, viewProjectionInverse,
+                    };
                 }
             }
             shouldRun = true;

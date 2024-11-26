@@ -1,4 +1,6 @@
-import { CameraPass, Framebuffer, GL, ShaderRenderPass } from '@lukaswagner/webgl-toolkit';
+import {
+    CameraMatrices, CameraPass, Framebuffer, GL, ShaderRenderPass,
+} from '@lukaswagner/webgl-toolkit';
 import { mat4 } from 'gl-matrix';
 
 const tracked = {
@@ -91,15 +93,8 @@ export class TrianglePass extends ShaderRenderPass<typeof tracked> implements Ca
         this._dirty.set('Model');
     }
 
-    public set viewProjection(v: mat4) {
-        this._viewProjection = v;
+    public set cameraMatrices(v: CameraMatrices) {
+        this._viewProjection = v.viewProjection;
         this._dirty.set('ViewProjection');
     }
-
-    // unused
-    public set view(v: mat4) { }
-    public set projection(v: mat4) { }
-    public set viewInverse(v: mat4) { }
-    public set projectionInverse(v: mat4) { }
-    public set viewProjectionInverse(v: mat4) { }
 }
