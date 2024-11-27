@@ -1,51 +1,103 @@
 import {
-    Renderer as BaseRenderer, BufferMode, CanvasFramebuffer, Framebuffer, TextureFormats,
+    Renderer as BaseRenderer,
+    BufferMode,
+    CanvasFramebuffer,
+    drawBuffers,
+    Framebuffer,
+    TextureFormats,
 } from '@lukaswagner/webgl-toolkit';
-import { BlurPass } from './blurPass';
-import { mat4 } from 'gl-matrix';
-import { TrianglePass } from '../triangle/trianglePass';
+import { FloodPass } from './floodPass';
+import { PointPass } from './pointPass';
+import { vec2 } from 'gl-matrix';
 
-export class Renderer extends BaseRenderer {
+const tracked = {
+    Size: true,
+    PickPos: false,
+};
+
+export class Renderer extends BaseRenderer<typeof tracked> {
+    protected _pointFbo: Framebuffer;
+    protected _pickPos = vec2.fromValues(-1, -1);
+    protected _range = 128;
+
+    public constructor(gl: WebGL2RenderingContext) {
+        super(gl, tracked);
+    }
+
     public initialize(): void {
-        const triangleFbo = new Framebuffer(this._gl, 'Triangle');
+        this._pointFbo = new Framebuffer(this._gl, 'Points');
+        const pointFloodTex = this._createTex(TextureFormats.RGBA, BufferMode.Double);
 
-        // set up texture as double buffered
-        const triangleTex = this._createTex(TextureFormats.RGBA, BufferMode.Double);
-
-        triangleFbo.initialize([
-            { slot: this._gl.COLOR_ATTACHMENT0, texture: triangleTex },
+        this._pointFbo.initialize([
+            { slot: this._gl.COLOR_ATTACHMENT0, texture: this._createTex(TextureFormats.RGBA) },
+            { slot: this._gl.COLOR_ATTACHMENT1, texture: pointFloodTex },
             { slot: this._gl.DEPTH_ATTACHMENT, texture: this._createTex(TextureFormats.Depth) },
         ]);
-        this._framebuffers.push(triangleFbo);
+        this._framebuffers.push(this._pointFbo);
 
-        const trianglePass = new TrianglePass(this._gl, 'Triangle');
-        trianglePass.initialize();
-        trianglePass.target = triangleFbo;
-        trianglePass.model = mat4.create();
-        trianglePass.preDraw = () => triangleFbo.clear(false, false);
-        this._passes.push(trianglePass);
+        const pointPass = new PointPass(this._gl, 'Points');
+        pointPass.initialize();
+        pointPass.target = this._pointFbo;
+        pointPass.selected = 0;
+        pointPass.preDraw = () => {
+            drawBuffers(this._gl, 0b11);
+            this._pointFbo.clear(false, false);
+        };
+        pointPass.postDraw = () => {
+            floodPass.step = this._range;
+            this._pointFbo.swap();
+        };
+        this._passes.push(pointPass);
 
-        const horizontalPass = new BlurPass(this._gl, 'Blur');
-        horizontalPass.initialize();
-        horizontalPass.target = triangleFbo;
-        horizontalPass.input = triangleTex;
-        horizontalPass.direction = [0, 1];
-        // use the output of triangle pass as read handle and set the other handle as write
-        horizontalPass.preDraw = () => triangleFbo.swap();
-        this._passes.push(horizontalPass);
+        const floodPass = new FloodPass(this._gl, 'Flood');
+        floodPass.initialize();
+        floodPass.input = pointFloodTex;
+        floodPass.target = this._pointFbo;
+        floodPass.preDraw = () => {
+            drawBuffers(this._gl, 0b10);
+        };
+        floodPass.postDraw = () => {
+            floodPass.step /= 2;
+            this._pointFbo.swap();
+        };
+
+        for (let i = 0; i < Math.log2(this._range) + 1; i++)
+            this._passes.push(floodPass);
 
         const canvasFbo = CanvasFramebuffer.getInstance(this._gl);
         this._framebuffers.push(canvasFbo);
 
-        const verticalPass = new BlurPass(this._gl, 'Blur');
-        verticalPass.initialize();
-        verticalPass.target = canvasFbo;
-        verticalPass.input = triangleTex;
-        verticalPass.direction = [1, 0];
-        // use the output of horizontal pass as read handle again
-        verticalPass.preDraw = () => triangleFbo.swap();
-        this._passes.push(verticalPass);
+        const blit = this._setupBlitPass(
+            this._pointFbo, this._gl.COLOR_ATTACHMENT0, canvasFbo, this._gl.BACK);
+        blit.postDraw = () => {
+            const id = this.pick();
+            pointPass.selected = id;
+        };
 
         super.initialize();
+    }
+
+    // todo: move this to specialized pass?
+    protected pick() {
+        if (this._pickPos[0] < 0 || this._pickPos[1] < 0 ||
+            this._pickPos[0] > this._size[0] || this._pickPos[1] > this._size[1])
+            return -1;
+        const data = new Uint8Array(4);
+        this._pointFbo.bind(this._gl.READ_FRAMEBUFFER);
+        this._gl.readBuffer(this._gl.COLOR_ATTACHMENT1);
+        this._gl.readPixels(
+            this._pickPos[0], this._pickPos[1], 1, 1,
+            TextureFormats.RGBA.format, TextureFormats.RGBA.type,
+            data);
+        this._pointFbo.unbind(this._gl.READ_FRAMEBUFFER);
+        const id = data[2] - 1;
+        return id;
+    }
+
+    public set pickPos(v: vec2) {
+        vec2.set(this._pickPos,
+            v[0] * window.devicePixelRatio,
+            this._size[1] - v[1] * window.devicePixelRatio);
+        this._dirty.set('PickPos');
     }
 }

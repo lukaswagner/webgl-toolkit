@@ -9,10 +9,10 @@ export type CameraMatrices = {
     viewProjectionInverse: mat4;
 };
 
-export interface CameraPass {
-    set cameraMatrices(m: CameraMatrices);
+export interface CameraListenerPass {
+    cameraChanged(m: CameraMatrices): void;
 }
 
-export function isCameraPass(obj: object): obj is CameraPass {
-    return 'cameraMatrices' in obj;
+export function isCameraListenerPass(obj: object): obj is CameraListenerPass {
+    return 'cameraChanged' in obj;
 }

@@ -22,6 +22,10 @@ class App {
 
         setupFullscreen(containerId);
 
+        this._canvas.onmousemove = (ev) => {
+            this._renderer.pickPos = [ev.offsetX, ev.offsetY];
+        };
+
         requestAnimationFrame((t) => this.draw(t));
     }
 

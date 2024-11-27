@@ -60,7 +60,7 @@ export class BlitPass extends RenderPass<typeof tracked> {
         drawBuffer(this._gl, this._drawBuffer);
 
         const readSize = this._readTarget.size;
-        const writeSize = this._readTarget.size;
+        const writeSize = this._drawTarget.size;
         this._gl.blitFramebuffer(
             0, 0, readSize[0], readSize[1],
             0, 0, writeSize[0], writeSize[1],

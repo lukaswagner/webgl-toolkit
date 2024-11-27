@@ -38,4 +38,8 @@ export class CanvasFramebuffer extends Framebuffer {
         this._canvas.width = this._size[0];
         this._canvas.height = this._size[1];
     }
+
+    public override get size() {
+        return this._size ?? [this._canvas.width, this._canvas.height];
+    }
 }

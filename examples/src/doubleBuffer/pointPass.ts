@@ -1,18 +1,14 @@
-import {
-    CameraListenerPass, CameraMatrices, Framebuffer, GL, ShaderRenderPass,
-} from '@lukaswagner/webgl-toolkit';
-import { mat4 } from 'gl-matrix';
+import { Framebuffer, GL, ShaderRenderPass } from '@lukaswagner/webgl-toolkit';
 
 const tracked = {
     Target: true,
-    Model: true,
-    ViewProjection: true,
+    Selected: true,
 };
 
-export class TrianglePass extends ShaderRenderPass<typeof tracked> implements CameraListenerPass {
+export class PointPass extends ShaderRenderPass<typeof tracked> {
+    protected static _COUNT = 10;
     protected _target: Framebuffer;
-    protected _model: mat4;
-    protected _viewProjection: mat4;
+    protected _selected = -1;
     protected _geometry: WebGLVertexArrayObject;
 
     public constructor(gl: GL, name?: string) {
@@ -20,28 +16,30 @@ export class TrianglePass extends ShaderRenderPass<typeof tracked> implements Ca
     }
 
     public initialize() {
-        this._geometry = this.createTriangle();
+        this._geometry = this.createPoints();
 
         this.setupProgram();
-        this.compileVert(require('./triangle.vert') as string);
-        this.compileFrag(require('./triangle.frag') as string);
+        this.compileVert(require('./point.vert') as string);
+        this.compileFrag(require('./point.frag') as string);
         this.linkProgram();
 
         this._dirty.setAll();
         return true;
     }
 
-    protected createTriangle() {
+    protected createPoints() {
         const vao = this._gl.createVertexArray();
         this._gl.bindVertexArray(vao);
 
         const position = this._gl.createBuffer();
         this._gl.bindBuffer(this._gl.ARRAY_BUFFER, position);
 
-        const positionData = new Float32Array([0, 0, 0, 1, 0, 0, 0, 1, 0]);
+        const positionData = new Float32Array(PointPass._COUNT * 2);
+        positionData.forEach((_, i) => positionData[i] = 0.1 + Math.random() * 0.8);
+
         this._gl.bufferData(this._gl.ARRAY_BUFFER, positionData.buffer, this._gl.STATIC_DRAW);
 
-        this._gl.vertexAttribPointer(0, 3, this._gl.FLOAT, false, 0, 0);
+        this._gl.vertexAttribPointer(0, 2, this._gl.FLOAT, false, 0, 0);
         this._gl.enableVertexAttribArray(0);
 
         this._gl.bindBuffer(this._gl.ARRAY_BUFFER, undefined);
@@ -50,19 +48,11 @@ export class TrianglePass extends ShaderRenderPass<typeof tracked> implements Ca
     }
 
     public prepare(): boolean {
-        if (this._dirty.get('Model')) {
+        if (this._dirty.get('Selected')) {
             this._gl.useProgram(this._program);
-            this._gl.uniformMatrix4fv(
-                this._uniforms.get('u_model'), false, this._model);
+            this._gl.uniform1i(this._uniforms.get('u_selected'), this._selected);
+            this._gl.useProgram(null);
         }
-
-        if (this._dirty.get('ViewProjection')) {
-            this._gl.useProgram(this._program);
-            this._gl.uniformMatrix4fv(
-                this._uniforms.get('u_viewProjection'), false, this._viewProjection);
-        }
-
-        this._gl.useProgram(null);
 
         return super.prepare();
     }
@@ -74,7 +64,7 @@ export class TrianglePass extends ShaderRenderPass<typeof tracked> implements Ca
 
     protected _draw(): void {
         this._gl.bindVertexArray(this._geometry);
-        this._gl.drawArrays(this._gl.TRIANGLES, 0, 3);
+        this._gl.drawArrays(this._gl.POINTS, 0, PointPass._COUNT);
         this._gl.bindVertexArray(undefined);
     }
 
@@ -88,13 +78,8 @@ export class TrianglePass extends ShaderRenderPass<typeof tracked> implements Ca
         this._dirty.set('Target');
     }
 
-    public set model(v: mat4) {
-        this._model = v;
-        this._dirty.set('Model');
-    }
-
-    public cameraChanged(v: CameraMatrices) {
-        this._viewProjection = v.viewProjection;
-        this._dirty.set('ViewProjection');
+    public set selected(v: number) {
+        this._selected = v;
+        this._dirty.set('Selected');
     }
 }

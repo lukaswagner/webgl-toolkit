@@ -13,6 +13,11 @@ export namespace TextureFormats {
         type: WebGL2RenderingContext.UNSIGNED_BYTE,
         internalFormat: WebGL2RenderingContext.R8,
     };
+    export const RGB: TextureFormat = {
+        format: WebGL2RenderingContext.RGB,
+        type: WebGL2RenderingContext.UNSIGNED_BYTE,
+        internalFormat: WebGL2RenderingContext.RGB8,
+    };
     export const RGBA: TextureFormat = {
         format: WebGL2RenderingContext.RGBA,
         type: WebGL2RenderingContext.UNSIGNED_BYTE,

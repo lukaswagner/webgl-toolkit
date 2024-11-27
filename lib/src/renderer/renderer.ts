@@ -1,9 +1,10 @@
-import { BlitPass, isCameraPass, RenderPass } from '../pass';
+import { BlitPass, isCameraListenerPass, RenderPass } from '../pass';
 import { BufferMode, Texture2D, TextureFormat, TextureFormats } from '../texture';
 import { mat4, vec2 } from 'gl-matrix';
 import { Camera } from '../camera';
 import { Dirty } from '../data';
 import { Framebuffer } from '../framebuffer';
+import { isSizeListenerPass } from '../pass/sizeListenerPass';
 
 const tracked = {
     Size: true,
@@ -43,6 +44,10 @@ export class Renderer<T extends Tracked = Tracked> {
             for (const fbo of this._framebuffers) {
                 fbo.size = this._size;
             }
+            for (const pass of this._passes) {
+                if (isSizeListenerPass(pass))
+                    pass.sizeChanged(this._size);
+            }
         }
 
         const cameraChanged = this._camera.timestamp > this._lastFrame;
@@ -54,11 +59,11 @@ export class Renderer<T extends Tracked = Tracked> {
             const projectionInverse = mat4.invert(mat4.create(), projection);
             const viewProjectionInverse = mat4.invert(mat4.create(), viewProjection);
             for (const pass of this._passes) {
-                if (isCameraPass(pass)) {
-                    pass.cameraMatrices = {
+                if (isCameraListenerPass(pass)) {
+                    pass.cameraChanged({
                         view, projection, viewProjection,
                         viewInverse, projectionInverse, viewProjectionInverse,
-                    };
+                    });
                 }
             }
             shouldRun = true;

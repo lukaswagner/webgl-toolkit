@@ -4,17 +4,33 @@ html(lang='de')
         meta(charset='UTF-8')
         meta(name='viewport', content='width=device-width, initial-scale=1.0')
     body
-        h2 basic examples
+        h1 examples
+
         div
             h3: a(href="./triangle.html") triangle
             div a basic 3d triangle
+            ul
+                li basic renderer setup
+                li simple geometry pass with shaders
+                li integrated camera controls
+
         div
             h3: a(href="./fullscreen.html") fullscreen
             div inverts the output of a previous pass using a fullscreen shader
-        h2 features
+            ul
+                li ready-to-use fullscreen pass with custom fragment shader
+                li texture as input to renderpass
+
         div
             h3: a(href="./shaderInject.html") shader value injection
             div inject compile-time values into shaders while keeping the original file a valid shader
+            ul
+                li helper function for replacing shader defines at compile time
+                li shader recompilation
+
         div
             h3: a(href="./doubleBuffer.html") texture double buffering
             div textures and framebuffers have inbuilt support for double buffering, allowing easy ping-pong rendering
+            ul
+                li single framebuffer with recursive rendering due to double buffering
+                li easy reuse of render pass due to preDraw/postDraw hooks

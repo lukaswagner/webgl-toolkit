@@ -50,10 +50,6 @@ export class FullscreenPass<T extends Tracked = Tracked> extends ShaderRenderPas
         super.compileFrag(src);
     }
 
-    public prepare(): boolean {
-        return super.prepare();
-    }
-
     protected _setup(): void {
         this._target.bind();
         this._gl.useProgram(this._program);

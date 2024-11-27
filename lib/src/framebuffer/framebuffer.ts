@@ -88,8 +88,8 @@ export class Framebuffer {
         if (unbind) this.unbind();
     }
 
-    public swap() {
-        this.bind();
+    public swap(bind = true, unbind = true) {
+        if (bind) this.bind();
         if (this._doubleBuffered.length > 0) {
             for (const i of this._doubleBuffered) {
                 const attachment = this._attachments[i];
@@ -97,7 +97,7 @@ export class Framebuffer {
                 this._attach(this._attachments[i]);
             }
         }
-        this.unbind();
+        if (unbind) this.unbind();
     }
 
     public get size() {
