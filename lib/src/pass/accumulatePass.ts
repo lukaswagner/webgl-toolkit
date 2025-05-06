@@ -21,18 +21,17 @@ export class AccumulatePass extends FullscreenPass<typeof tracked> {
         const fragSrc = accumulateFrag;
         const valid = super.initialize({ fragSrc });
 
-        this._gl.useProgram(this._program);
-        this._gl.uniform1i(this._uniforms.get('u_input'), 0);
-        this._gl.useProgram(null);
+        this._program.bind();
+        this._gl.uniform1i(this._program.uniforms.get('u_input'), 0);
+        this._program.unbind();
 
         return valid;
     }
 
     protected override _setup(): void {
         if (this._dirty.get('Frame')) {
-            this._gl.useProgram(this._program);
-            this._gl.uniform1f(this._uniforms.get('u_alpha'), 1 / (this._frame + 1));
-            this._gl.useProgram(null);
+            this._program.bind();
+            this._gl.uniform1f(this._program.uniforms.get('u_alpha'), 1 / (this._frame + 1));
         }
 
         super._setup();

@@ -1,7 +1,7 @@
-import { fullscreenFrag, fullscreenVert, replaceDefines } from '../shader';
+import { fullscreenFrag, fullscreenVert, Program, replaceDefines } from '../shader';
 import { Framebuffer } from '../framebuffer';
 import { GL } from '../gl';
-import { ShaderRenderPass } from './shaderRenderPass';
+import { RenderPass } from './renderPass';
 
 const tracked = {
     Target: true,
@@ -16,19 +16,20 @@ type Options = {
     fragSrc?: string;
 };
 
-export class FullscreenPass<T extends Tracked = Tracked> extends ShaderRenderPass<T> {
+export class FullscreenPass<T extends Tracked = Tracked> extends RenderPass<T> {
     protected _buffer: WebGLBuffer;
     protected _target: Framebuffer;
+    protected _program: Program;
 
     public constructor(gl: GL, trackedMembers: T = tracked as any as T, name?: string) {
         super(gl, trackedMembers, name);
     }
 
     public initialize(options?: Options) {
-        this._setupProgram();
-        this._compileVert(fullscreenVert);
+        this._program = new Program(this._gl, 'points');
+        this._program.compileVert(fullscreenVert);
         this._compileFrag(options?.fragSrc);
-        this._linkProgram();
+        this._program.link();
 
         this._buffer = this._gl.createBuffer();
         this._gl.bindBuffer(this._gl.ARRAY_BUFFER, this._buffer);
@@ -42,17 +43,17 @@ export class FullscreenPass<T extends Tracked = Tracked> extends ShaderRenderPas
         return true;
     }
 
-    protected override _compileFrag(src?: string) {
+    protected _compileFrag(src?: string) {
         if (!src) src = fullscreenFrag;
         src = replaceDefines(src, [
             { key: 'COLOR_LOCATION', value: FragmentLocation.Color },
         ]);
-        super._compileFrag(src);
+        this._program.compileFrag(src);
     }
 
     protected _setup(): void {
         this._target.bind();
-        this._gl.useProgram(this._program);
+        this._program.bind();
 
         this._dirty.reset();
     }
@@ -65,7 +66,7 @@ export class FullscreenPass<T extends Tracked = Tracked> extends ShaderRenderPas
 
     protected _tearDown(): void {
         this._target.unbind();
-        this._gl.useProgram(null);
+        this._program.unbind();
     }
 
     public set target(v: Framebuffer) {

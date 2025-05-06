@@ -1,5 +1,5 @@
 import {
-    CameraListenerPass, CameraMatrices, Framebuffer, GL, ShaderRenderPass,
+    CameraListenerPass, CameraMatrices, Framebuffer, GL, Program, RenderPass,
 } from '@lukaswagner/webgl-toolkit';
 import { mat4 } from 'gl-matrix';
 
@@ -9,11 +9,12 @@ const tracked = {
     ViewProjection: true,
 };
 
-export class TrianglePass extends ShaderRenderPass<typeof tracked> implements CameraListenerPass {
+export class TrianglePass extends RenderPass<typeof tracked> implements CameraListenerPass {
     protected _target: Framebuffer;
     protected _model: mat4;
     protected _viewProjection: mat4;
     protected _geometry: WebGLVertexArrayObject;
+    protected _program: Program;
 
     public constructor(gl: GL, name?: string) {
         super(gl, tracked, name);
@@ -22,10 +23,10 @@ export class TrianglePass extends ShaderRenderPass<typeof tracked> implements Ca
     public initialize() {
         this._geometry = this._createTriangle();
 
-        this._setupProgram();
-        this._compileVert(require('./triangle.vert') as string);
-        this._compileFrag(require('./triangle.frag') as string);
-        this._linkProgram();
+        this._program = new Program(this._gl, 'points');
+        this._program.compileVert(require('./triangle.vert') as string);
+        this._program.compileFrag(require('./triangle.frag') as string);
+        this._program.link();
 
         this._dirty.setAll();
         return true;
@@ -50,16 +51,16 @@ export class TrianglePass extends ShaderRenderPass<typeof tracked> implements Ca
     }
 
     protected _setup(): void {
-        this._gl.useProgram(this._program);
+        this._program.bind();
 
         if (this._dirty.get('Model')) {
             this._gl.uniformMatrix4fv(
-                this._uniforms.get('u_model'), false, this._model);
+                this._program.uniforms.get('u_model'), false, this._model);
         }
 
         if (this._dirty.get('ViewProjection')) {
             this._gl.uniformMatrix4fv(
-                this._uniforms.get('u_viewProjection'), false, this._viewProjection);
+                this._program.uniforms.get('u_viewProjection'), false, this._viewProjection);
         }
 
         this._target.bind();
@@ -75,7 +76,7 @@ export class TrianglePass extends ShaderRenderPass<typeof tracked> implements Ca
 
     protected _tearDown(): void {
         this._target.unbind();
-        this._gl.useProgram(null);
+        this._program.unbind();
     }
 
     public set target(v: Framebuffer) {

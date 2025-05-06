@@ -27,15 +27,15 @@ export class BlurPass extends FullscreenPass<typeof tracked> {
     }
 
     protected _initUniforms() {
-        this._gl.useProgram(this._program);
-        this._gl.uniform1i(this._uniforms.get('u_input'), 0);
-        this._gl.useProgram(null);
+        this._program.bind();
+        this._gl.uniform1i(this._program.uniforms.get('u_input'), 0);
+        this._program.unbind();
     }
 
     protected _setup(): void {
         if (this._dirty.get('Radius')) {
             this._compileFrag(this._getFragSrc());
-            this._linkProgram();
+            this._program.link();
             this._initUniforms();
         }
 

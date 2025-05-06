@@ -1,15 +1,16 @@
-import { Framebuffer, GL, ShaderRenderPass } from '@lukaswagner/webgl-toolkit';
+import { Framebuffer, GL, Program, RenderPass } from '@lukaswagner/webgl-toolkit';
 
 const tracked = {
     Target: true,
     Selected: true,
 };
 
-export class PointPass extends ShaderRenderPass<typeof tracked> {
+export class PointPass extends RenderPass<typeof tracked> {
     protected static _COUNT = 10;
     protected _target: Framebuffer;
     protected _selected = -1;
     protected _geometry: WebGLVertexArrayObject;
+    protected _program: Program;
 
     public constructor(gl: GL, name?: string) {
         super(gl, tracked, name);
@@ -18,10 +19,10 @@ export class PointPass extends ShaderRenderPass<typeof tracked> {
     public initialize() {
         this._geometry = this._createPoints();
 
-        this._setupProgram();
-        this._compileVert(require('./point.vert') as string);
-        this._compileFrag(require('./point.frag') as string);
-        this._linkProgram();
+        this._program = new Program(this._gl, 'points');
+        this._program.compileVert(require('./point.vert') as string);
+        this._program.compileFrag(require('./point.frag') as string);
+        this._program.link();
 
         this._dirty.setAll();
         return true;
@@ -49,10 +50,10 @@ export class PointPass extends ShaderRenderPass<typeof tracked> {
 
     protected _setup(): void {
         this._target.bind();
-        this._gl.useProgram(this._program);
+        this._program.bind();
 
         if (this._dirty.get('Selected'))
-            this._gl.uniform1i(this._uniforms.get('u_selected'), this._selected);
+            this._gl.uniform1i(this._program.uniforms.get('u_selected'), this._selected);
 
         this._dirty.reset();
     }
@@ -65,7 +66,7 @@ export class PointPass extends ShaderRenderPass<typeof tracked> {
 
     protected _tearDown(): void {
         this._target.unbind();
-        this._gl.useProgram(null);
+        this._program.unbind();
     }
 
     public set target(v: Framebuffer) {

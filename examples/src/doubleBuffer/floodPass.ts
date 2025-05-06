@@ -21,9 +21,9 @@ export class FloodPass extends FullscreenPass<typeof tracked> implements SizeLis
         const fragSrc = require('./flood.frag') as string;
         const valid = super.initialize({ fragSrc });
 
-        this._gl.useProgram(this._program);
-        this._gl.uniform1i(this._uniforms.get('u_input'), 0);
-        this._gl.useProgram(null);
+        this._program.bind();
+        this._gl.uniform1i(this._program.uniforms.get('u_input'), 0);
+        this._program.unbind();
 
         return valid;
     }
@@ -37,11 +37,11 @@ export class FloodPass extends FullscreenPass<typeof tracked> implements SizeLis
     protected _setup(): void {
         super._setup();
 
-        this._gl.uniform1i(this._uniforms.get('u_step'), this._step);
+        this._gl.uniform1i(this._program.uniforms.get('u_step'), this._step);
 
         if (this._dirty.get('Size'))
             this._gl.uniform2f(
-                this._uniforms.get('u_resStep'), 1 / this._size[0], 1 / this._size[1]);
+                this._program.uniforms.get('u_resStep'), 1 / this._size[0], 1 / this._size[1]);
 
         this._inputTex.bind(this._gl.TEXTURE0);
 
