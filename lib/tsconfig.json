@@ -8,5 +8,6 @@
         "declaration": true,
         "declarationDir": "build/types",
         "declarationMap": true,
+        "noImplicitOverride": true,
     }
 }

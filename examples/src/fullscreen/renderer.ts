@@ -19,7 +19,7 @@ export class Renderer extends BaseRenderer {
         trianglePass.initialize();
         trianglePass.target = triangleFbo;
         trianglePass.model = mat4.create();
-        trianglePass.preDraw = () => triangleFbo.clear(false, false);
+        trianglePass.preDraw = () => triangleFbo.clear();
         this._passes.push(trianglePass);
 
         const canvasFbo = CanvasFramebuffer.getInstance(this._gl);

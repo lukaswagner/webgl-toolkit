@@ -17,7 +17,7 @@ export class AccumulatePass extends FullscreenPass<typeof tracked> {
         super(gl, tracked, name);
     }
 
-    public initialize(): boolean {
+    public override initialize(): boolean {
         const fragSrc = accumulateFrag;
         const valid = super.initialize({ fragSrc });
 
@@ -28,22 +28,20 @@ export class AccumulatePass extends FullscreenPass<typeof tracked> {
         return valid;
     }
 
-    public prepare(): boolean {
+    protected override _setup(): void {
         if (this._dirty.get('Frame')) {
             this._gl.useProgram(this._program);
             this._gl.uniform1f(this._uniforms.get('u_alpha'), 1 / (this._frame + 1));
             this._gl.useProgram(null);
         }
-        return super.prepare();
-    }
 
-    protected _setup(): void {
         super._setup();
-
         this._inputTex.bind(this._gl.TEXTURE0);
+
+        this._dirty.reset();
     }
 
-    protected _tearDown(): void {
+    protected override _tearDown(): void {
         this._inputTex.unbind(this._gl.TEXTURE0);
         super._tearDown();
     }

@@ -26,6 +26,8 @@ export class InvertPass extends FullscreenPass<typeof tracked> {
     protected _setup(): void {
         super._setup();
         this._inputTex.bind(this._gl.TEXTURE0);
+
+        this._dirty.reset();
     }
 
     protected _tearDown(): void {

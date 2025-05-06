@@ -70,7 +70,7 @@ export class Renderer<T extends Tracked = Tracked> {
         }
 
         for (const pass of this._passes) {
-            if (pass.prepare()) shouldRun = true;
+            if (pass.dirty) shouldRun = true;
         }
 
         this._dirty.reset();

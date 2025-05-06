@@ -89,7 +89,7 @@ export class TaaRenderer<T extends Tracked = Tracked> extends Renderer<T> {
         }
     }
 
-    public draw(time: number) {
+    public override draw(time: number) {
         super.draw(time);
 
         if (this._taaEnabled) {

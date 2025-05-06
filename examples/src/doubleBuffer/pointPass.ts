@@ -47,19 +47,14 @@ export class PointPass extends ShaderRenderPass<typeof tracked> {
         return vao;
     }
 
-    public prepare(): boolean {
-        if (this._dirty.get('Selected')) {
-            this._gl.useProgram(this._program);
-            this._gl.uniform1i(this._uniforms.get('u_selected'), this._selected);
-            this._gl.useProgram(null);
-        }
-
-        return super.prepare();
-    }
-
     protected _setup(): void {
         this._target.bind();
         this._gl.useProgram(this._program);
+
+        if (this._dirty.get('Selected'))
+            this._gl.uniform1i(this._uniforms.get('u_selected'), this._selected);
+
+        this._dirty.reset();
     }
 
     protected _draw(): void {

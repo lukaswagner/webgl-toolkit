@@ -42,7 +42,7 @@ export class FullscreenPass<T extends Tracked = Tracked> extends ShaderRenderPas
         return true;
     }
 
-    protected compileFrag(src?: string) {
+    protected override compileFrag(src?: string) {
         if (!src) src = fullscreenFrag;
         src = replaceDefines(src, [
             { key: 'COLOR_LOCATION', value: FragmentLocation.Color },
@@ -53,6 +53,8 @@ export class FullscreenPass<T extends Tracked = Tracked> extends ShaderRenderPas
     protected _setup(): void {
         this._target.bind();
         this._gl.useProgram(this._program);
+
+        this._dirty.reset();
     }
 
     protected _draw(): void {

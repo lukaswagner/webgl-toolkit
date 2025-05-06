@@ -49,27 +49,22 @@ export class TrianglePass extends ShaderRenderPass<typeof tracked> implements Ca
         return vao;
     }
 
-    public prepare(): boolean {
+    protected _setup(): void {
+        this._gl.useProgram(this._program);
+
         if (this._dirty.get('Model')) {
-            this._gl.useProgram(this._program);
             this._gl.uniformMatrix4fv(
                 this._uniforms.get('u_model'), false, this._model);
         }
 
         if (this._dirty.get('ViewProjection')) {
-            this._gl.useProgram(this._program);
             this._gl.uniformMatrix4fv(
                 this._uniforms.get('u_viewProjection'), false, this._viewProjection);
         }
 
-        this._gl.useProgram(null);
-
-        return super.prepare();
-    }
-
-    protected _setup(): void {
         this._target.bind();
-        this._gl.useProgram(this._program);
+
+        this._dirty.reset();
     }
 
     protected _draw(): void {

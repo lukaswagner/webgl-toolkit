@@ -28,15 +28,7 @@ export class FloodPass extends FullscreenPass<typeof tracked> implements SizeLis
         return valid;
     }
 
-    public prepare(): boolean {
-        if (this._dirty.get('Size')) {
-            this._gl.useProgram(this._program);
-            this._gl.uniform2f(
-                this._uniforms.get('u_resStep'), 1 / this._size[0], 1 / this._size[1]);
-            this._gl.useProgram(null);
-        }
-
-        super.prepare();
+    public get dirty(): boolean {
         // don't trigger redraw because the step size is changed multiple times per frame
         // this would result in permanent rendering
         return false;
@@ -44,8 +36,16 @@ export class FloodPass extends FullscreenPass<typeof tracked> implements SizeLis
 
     protected _setup(): void {
         super._setup();
+
         this._gl.uniform1i(this._uniforms.get('u_step'), this._step);
+
+        if (this._dirty.get('Size'))
+            this._gl.uniform2f(
+                this._uniforms.get('u_resStep'), 1 / this._size[0], 1 / this._size[1]);
+
         this._inputTex.bind(this._gl.TEXTURE0);
+
+        this._dirty.reset();
     }
 
     protected _tearDown(): void {

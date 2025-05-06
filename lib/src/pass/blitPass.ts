@@ -52,20 +52,26 @@ export class BlitPass extends RenderPass<typeof tracked> {
 
     public override initialize(): void { }
 
-    protected override _draw(): void {
+    protected override _setup(): void {
         this._readTarget.bind(this._gl.READ_FRAMEBUFFER);
         this._gl.readBuffer(this._readBuffer);
 
         this._drawTarget.bind(this._gl.DRAW_FRAMEBUFFER);
         drawBuffer(this._gl, this._drawBuffer);
 
+        this._dirty.reset();
+    }
+
+    protected override _draw(): void {
         const readSize = this._readTarget.size;
         const writeSize = this._drawTarget.size;
         this._gl.blitFramebuffer(
             0, 0, readSize[0], readSize[1],
             0, 0, writeSize[0], writeSize[1],
             this._gl.COLOR_BUFFER_BIT, this._gl.NEAREST);
+    }
 
+    protected override _tearDown(): void {
         this._readTarget.unbind(this._gl.READ_FRAMEBUFFER);
         this._drawTarget.unbind(this._gl.DRAW_FRAMEBUFFER);
     }

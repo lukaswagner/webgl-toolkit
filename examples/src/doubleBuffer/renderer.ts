@@ -40,8 +40,9 @@ export class Renderer extends BaseRenderer<typeof tracked> {
         pointPass.target = this._pointFbo;
         pointPass.selected = 0;
         pointPass.preDraw = () => {
+            this._pointFbo.bind();
             drawBuffers(this._gl, 0b11);
-            this._pointFbo.clear(false, false);
+            this._pointFbo.clear();
         };
         pointPass.postDraw = () => {
             floodPass.step = this._range;
@@ -54,6 +55,7 @@ export class Renderer extends BaseRenderer<typeof tracked> {
         floodPass.input = pointFloodTex;
         floodPass.target = this._pointFbo;
         floodPass.preDraw = () => {
+            this._pointFbo.bind();
             drawBuffers(this._gl, 0b10);
         };
         floodPass.postDraw = () => {

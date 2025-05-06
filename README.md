@@ -1,11 +1,7 @@
 # webgl-toolkit
 
 ### ideas
-- reorder setup/predraw calls to avoid state breaking
 - introduce shader program class to optimize shader replace/recomp management
-- move prepare code to draw loop
-  - add additional needRedraw call before
-  - allow previous passes to affect prepare
 - add postFrame callback to manage picking in (should be controlled by app and not always done)
 - add picking logic to renderer for easier use
 - standardize function names (_ or not)
@@ -13,3 +9,9 @@
   - framebuffer views
   - shader editor
   - renderpass list
+- standardize tracked/dirty naming and initial values
+- move helper functions out of renderer
+- apply new renderPass interface style to jitterpass
+- add uniform set code to uniforms class for easier access
+- fix renderer breaking without camera
+- make sure multiple renderers on same page work

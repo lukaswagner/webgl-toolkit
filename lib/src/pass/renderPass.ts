@@ -16,40 +16,31 @@ export abstract class RenderPass<T extends DirtyInit> {
         return this._name;
     }
 
-    public prepare(): boolean {
-        const shouldDraw = this._dirty.any();
-        this._dirty.reset();
-        return shouldDraw;
+    public get dirty(): boolean {
+        return this._dirty.any();
     }
 
     public abstract initialize(options?: {}): void;
-
-    protected _setup?(): void;
-    public set setup(v: () => void) {
-        this._setup = v;
-    }
 
     protected _preDraw?(): void;
     public set preDraw(v: () => void) {
         this._preDraw = v;
     }
 
+    protected abstract _setup?(): void;
+    protected abstract _draw(): void;
+    protected abstract _tearDown?(): void;
+
     protected _postDraw?(): void;
     public set postDraw(v: () => void) {
         this._postDraw = v;
     }
 
-    protected _tearDown?(): void;
-    public set tearDown(v: () => void) {
-        this._tearDown = v;
-    }
-
-    protected abstract _draw(): void;
     public draw(): void {
-        this._setup?.();
         this._preDraw?.();
+        this._setup?.();
         this._draw();
-        this._postDraw?.();
         this._tearDown?.();
+        this._postDraw?.();
     }
 }
