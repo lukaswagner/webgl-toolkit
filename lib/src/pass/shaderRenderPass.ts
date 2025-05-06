@@ -15,7 +15,7 @@ export abstract class ShaderRenderPass<T extends DirtyInit> extends RenderPass<T
         super(gl, trackedMembers, name);
     }
 
-    protected compileVert(src: string) {
+    protected _compileVert(src: string) {
         this._gl.shaderSource(this._vert, src);
         this._gl.compileShader(this._vert);
         this._vertCompiled = this._gl.getShaderParameter(this._vert, this._gl.COMPILE_STATUS);
@@ -25,7 +25,7 @@ export abstract class ShaderRenderPass<T extends DirtyInit> extends RenderPass<T
         }
     }
 
-    protected compileFrag(src: string) {
+    protected _compileFrag(src: string) {
         this._gl.shaderSource(this._frag, src);
         this._gl.compileShader(this._frag);
         this._fragCompiled = this._gl.getShaderParameter(this._frag, this._gl.COMPILE_STATUS);
@@ -35,7 +35,7 @@ export abstract class ShaderRenderPass<T extends DirtyInit> extends RenderPass<T
         }
     }
 
-    protected setupProgram() {
+    protected _setupProgram() {
         this._vert = this._gl.createShader(this._gl.VERTEX_SHADER);
         this._frag = this._gl.createShader(this._gl.FRAGMENT_SHADER);
         this._program = this._gl.createProgram();
@@ -43,7 +43,7 @@ export abstract class ShaderRenderPass<T extends DirtyInit> extends RenderPass<T
         this._gl.attachShader(this._program, this._frag);
     }
 
-    protected linkProgram() {
+    protected _linkProgram() {
         if (!this._vertCompiled)
             console.log('vertex shader not compiled, skipping linking');
         if (!this._fragCompiled)

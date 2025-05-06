@@ -34,8 +34,8 @@ export class BlurPass extends FullscreenPass<typeof tracked> {
 
     protected _setup(): void {
         if (this._dirty.get('Radius')) {
-            this.compileFrag(this._getFragSrc());
-            this.linkProgram();
+            this._compileFrag(this._getFragSrc());
+            this._linkProgram();
             this._initUniforms();
         }
 

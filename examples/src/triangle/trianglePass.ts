@@ -20,18 +20,18 @@ export class TrianglePass extends ShaderRenderPass<typeof tracked> implements Ca
     }
 
     public initialize() {
-        this._geometry = this.createTriangle();
+        this._geometry = this._createTriangle();
 
-        this.setupProgram();
-        this.compileVert(require('./triangle.vert') as string);
-        this.compileFrag(require('./triangle.frag') as string);
-        this.linkProgram();
+        this._setupProgram();
+        this._compileVert(require('./triangle.vert') as string);
+        this._compileFrag(require('./triangle.frag') as string);
+        this._linkProgram();
 
         this._dirty.setAll();
         return true;
     }
 
-    protected createTriangle() {
+    protected _createTriangle() {
         const vao = this._gl.createVertexArray();
         this._gl.bindVertexArray(vao);
 

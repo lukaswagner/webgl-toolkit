@@ -22,13 +22,13 @@ class App {
 
         setupFullscreen(containerId);
 
-        requestAnimationFrame((t) => this.draw(t));
+        requestAnimationFrame((t) => this._draw(t));
     }
 
-    protected draw(time: number) {
+    protected _draw(time: number) {
         const shouldDraw = this._renderer.prepare(time);
         if (shouldDraw) this._renderer.draw(time);
-        requestAnimationFrame((t) => this.draw(t));
+        requestAnimationFrame((t) => this._draw(t));
     }
 }
 

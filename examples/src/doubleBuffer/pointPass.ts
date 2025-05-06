@@ -16,18 +16,18 @@ export class PointPass extends ShaderRenderPass<typeof tracked> {
     }
 
     public initialize() {
-        this._geometry = this.createPoints();
+        this._geometry = this._createPoints();
 
-        this.setupProgram();
-        this.compileVert(require('./point.vert') as string);
-        this.compileFrag(require('./point.frag') as string);
-        this.linkProgram();
+        this._setupProgram();
+        this._compileVert(require('./point.vert') as string);
+        this._compileFrag(require('./point.frag') as string);
+        this._linkProgram();
 
         this._dirty.setAll();
         return true;
     }
 
-    protected createPoints() {
+    protected _createPoints() {
         const vao = this._gl.createVertexArray();
         this._gl.bindVertexArray(vao);
 

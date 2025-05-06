@@ -72,7 +72,7 @@ export class Renderer extends BaseRenderer<typeof tracked> {
         const blit = this._setupBlitPass(
             this._pointFbo, this._gl.COLOR_ATTACHMENT0, canvasFbo, this._gl.BACK);
         blit.postDraw = () => {
-            const id = this.pick();
+            const id = this._pick();
             pointPass.selected = id;
         };
 
@@ -80,7 +80,7 @@ export class Renderer extends BaseRenderer<typeof tracked> {
     }
 
     // todo: move this to specialized pass?
-    protected pick() {
+    protected _pick() {
         if (this._pickPos[0] < 0 || this._pickPos[1] < 0 ||
             this._pickPos[0] > this._size[0] || this._pickPos[1] > this._size[1])
             return -1;
