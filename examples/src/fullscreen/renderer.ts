@@ -22,7 +22,7 @@ export class Renderer extends BaseRenderer {
         trianglePass.preDraw = () => triangleFbo.clear();
         this._passes.push(trianglePass);
 
-        const canvasFbo = CanvasFramebuffer.getInstance(this._gl);
+        const canvasFbo = new CanvasFramebuffer(this._gl);
         this._framebuffers.push(canvasFbo);
 
         const invertPass = new InvertPass(this._gl, 'Invert');

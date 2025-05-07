@@ -6,19 +6,12 @@ import { vec2 } from 'gl-matrix';
  * Proxy framebuffer targeting the canvas.
  */
 export class CanvasFramebuffer extends Framebuffer {
-    protected static _instance: CanvasFramebuffer;
     protected _canvas: HTMLCanvasElement | OffscreenCanvas;
 
-    protected constructor(gl: GL) {
+    public constructor(gl: GL) {
         super(gl, 'Canvas');
-    }
-
-    public static getInstance(gl: GL) {
-        if (!CanvasFramebuffer._instance)
-            CanvasFramebuffer._instance = new CanvasFramebuffer(gl);
-        CanvasFramebuffer._instance._handle = null;
-        CanvasFramebuffer._instance._canvas = gl.canvas;
-        return CanvasFramebuffer._instance;
+        this._handle = null;
+        this._canvas = gl.canvas;
     }
 
     public override initialize(): void { }

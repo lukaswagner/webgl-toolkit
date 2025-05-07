@@ -66,7 +66,7 @@ export class Renderer extends BaseRenderer<typeof tracked> {
         for (let i = 0; i < Math.log2(this._range) + 1; i++)
             this._passes.push(floodPass);
 
-        const canvasFbo = CanvasFramebuffer.getInstance(this._gl);
+        const canvasFbo = new CanvasFramebuffer(this._gl);
         this._framebuffers.push(canvasFbo);
 
         const blit = this._setupBlitPass(

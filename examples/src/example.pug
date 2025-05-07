@@ -10,6 +10,9 @@ mixin example(title)
             div#page
                 div#header
                     a(href="./index.html") < back to index
-                div#container
-                    canvas#canvas
-                    div#ui
+                if block
+                    block
+                else
+                    div#container
+                        canvas#canvas
+                        div#ui

@@ -4,7 +4,7 @@ import { TrianglePass } from './trianglePass';
 
 export class Renderer extends BaseRenderer {
     public initialize(): void {
-        const canvasFbo = CanvasFramebuffer.getInstance(this._gl);
+        const canvasFbo = new CanvasFramebuffer(this._gl);
         this._framebuffers.push(canvasFbo);
 
         const trianglePass = new TrianglePass(this._gl, 'Triangle');
