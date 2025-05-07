@@ -1,4 +1,4 @@
-import { fullscreenFrag, fullscreenVert, Program, replaceDefines } from '../shader';
+import { fullscreenFrag, fullscreenVert, Program } from '../shader';
 import { Framebuffer } from '../framebuffer';
 import { GL } from '../gl';
 import { RenderPass } from './renderPass';
@@ -27,9 +27,10 @@ export class FullscreenPass<T extends Tracked = Tracked> extends RenderPass<T> {
 
     public initialize(options?: Options) {
         this._program = new Program(this._gl, 'points');
-        this._program.compileVert(fullscreenVert);
-        this._compileFrag(options?.fragSrc);
-        this._program.link();
+        this._program.setDefine('COLOR_LOCATION', FragmentLocation.Color);
+        this._program.vertSrc = fullscreenVert;
+        this._program.fragSrc = options?.fragSrc ?? fullscreenFrag;
+        this._program.compile();
 
         this._buffer = this._gl.createBuffer();
         this._gl.bindBuffer(this._gl.ARRAY_BUFFER, this._buffer);
@@ -41,14 +42,6 @@ export class FullscreenPass<T extends Tracked = Tracked> extends RenderPass<T> {
 
         this._dirty.setAll();
         return true;
-    }
-
-    protected _compileFrag(src?: string) {
-        if (!src) src = fullscreenFrag;
-        src = replaceDefines(src, [
-            { key: 'COLOR_LOCATION', value: FragmentLocation.Color },
-        ]);
-        this._program.compileFrag(src);
     }
 
     protected _setup(): void {

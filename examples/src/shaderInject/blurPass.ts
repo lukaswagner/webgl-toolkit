@@ -1,4 +1,4 @@
-import { FullscreenPass, GL, replaceDefines, Texture2D } from '@lukaswagner/webgl-toolkit';
+import { FullscreenPass, GL, Texture2D } from '@lukaswagner/webgl-toolkit';
 
 const tracked = {
     Target: true,
@@ -9,21 +9,15 @@ const tracked = {
 export class BlurPass extends FullscreenPass<typeof tracked> {
     protected _inputTex: Texture2D;
     protected _radius = 1;
-    protected _fragSrc: string;
 
     public constructor(gl: GL, name?: string) {
         super(gl, tracked, name);
     }
 
     public initialize(): boolean {
-        this._fragSrc = require('./blur.frag') as string;
-        const valid = super.initialize({ fragSrc: this._getFragSrc() });
+        const valid = super.initialize({ fragSrc: require('./blur.frag') as string });
         this._initUniforms();
         return valid;
-    }
-
-    protected _getFragSrc() {
-        return replaceDefines(this._fragSrc, [{ key: 'RADIUS', value: this._radius }]);
     }
 
     protected _initUniforms() {
@@ -34,8 +28,8 @@ export class BlurPass extends FullscreenPass<typeof tracked> {
 
     protected _setup(): void {
         if (this._dirty.get('Radius')) {
-            this._compileFrag(this._getFragSrc());
-            this._program.link();
+            this._program.setDefine('RADIUS', this._radius);
+            this._program.compile();
             this._initUniforms();
         }
 

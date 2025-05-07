@@ -20,9 +20,9 @@ export class PointPass extends RenderPass<typeof tracked> {
         this._geometry = this._createPoints();
 
         this._program = new Program(this._gl, 'points');
-        this._program.compileVert(require('./point.vert') as string);
-        this._program.compileFrag(require('./point.frag') as string);
-        this._program.link();
+        this._program.vertSrc = require('./point.vert') as string;
+        this._program.fragSrc = require('./point.frag') as string;
+        this._program.compile();
 
         this._dirty.setAll();
         return true;

@@ -24,9 +24,9 @@ export class TrianglePass extends RenderPass<typeof tracked> implements CameraLi
         this._geometry = this._createTriangle();
 
         this._program = new Program(this._gl, 'points');
-        this._program.compileVert(require('./triangle.vert') as string);
-        this._program.compileFrag(require('./triangle.frag') as string);
-        this._program.link();
+        this._program.vertSrc = require('./triangle.vert') as string;
+        this._program.fragSrc = require('./triangle.frag') as string;
+        this._program.compile();
 
         this._dirty.setAll();
         return true;
