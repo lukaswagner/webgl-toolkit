@@ -10,6 +10,4 @@
 - standardize tracked/dirty naming and initial values
 - move helper functions out of renderer
 - apply new renderPass interface style to jitterpass
-- add uniform set code to uniforms class for easier access
 - fix renderer breaking without camera
-- make sure multiple renderers on same page work

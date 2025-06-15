@@ -53,7 +53,7 @@ export class PointPass extends RenderPass<typeof tracked> {
         this._program.bind();
 
         if (this._dirty.get('Selected'))
-            this._gl.uniform1i(this._program.getUniformLocation('u_selected'), this._selected);
+            this._program.setUniform('u_selected', this._selected);
 
         this._dirty.reset();
     }

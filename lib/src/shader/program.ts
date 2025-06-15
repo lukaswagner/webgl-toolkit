@@ -1,5 +1,21 @@
+import {
+    getUniformSetFuncMap,
+    MultiSetFunc,
+    MultiSetParam,
+    SingleSetFunc,
+    SingleSetParam,
+    UniformSetFuncMap,
+} from './uniformSetFunctionMap';
 import { GL } from '../gl';
 import { replaceDefines } from './defines';
+
+type UniformInfo = {
+    type: number;
+    size: number;
+    location: WebGLUniformLocation;
+    singleSetFunc: SingleSetFunc;
+    multiSetFunc: MultiSetFunc;
+};
 
 export class Program {
     protected _gl: GL;
@@ -21,12 +37,15 @@ export class Program {
     protected _program: WebGLProgram;
     protected _linked = false;
 
-    protected _uniformLocations = new Map<string, WebGLUniformLocation>();
     protected _attributeLocations = new Map<string, GLint>();
+
+    protected _uniformSetFuncMap: UniformSetFuncMap;
+    protected _uniformInfo = new Map<string, UniformInfo>();
 
     public constructor(gl: GL, name = 'unnamed program') {
         this._gl = gl;
         this._name = name;
+        this._uniformSetFuncMap = getUniformSetFuncMap(gl);
     }
 
     public set vertSrc(v: string) {
@@ -114,7 +133,7 @@ export class Program {
             console.log(this._gl.getProgramInfoLog(this._program));
         }
 
-        this._uniformLocations = new Map<string, WebGLUniformLocation>();
+        this._getUniformInfo();
         this._attributeLocations = new Map<string, GLint>();
     }
 
@@ -141,12 +160,7 @@ export class Program {
     }
 
     public getUniformLocation(key: string): WebGLUniformLocation {
-        let location = this._uniformLocations.get(key);
-        if (location === undefined) {
-            location = this._gl.getUniformLocation(this._program, key);
-            this._uniformLocations.set(key, location);
-        }
-        return location;
+        return this._uniformInfo.get(key)?.location;
     }
 
     public getAttributeLocation(key: string): GLint {
@@ -156,5 +170,40 @@ export class Program {
             this._attributeLocations.set(key, location);
         }
         return location;
+    }
+
+    protected _getUniformInfo() {
+        this._uniformInfo = new Map<string, UniformInfo>();
+        const activeCount = this._gl.getProgramParameter(this._program, this._gl.ACTIVE_UNIFORMS);
+
+        for (let i = 0; i < activeCount; i++) {
+            const info = this._gl.getActiveUniform(this._program, i);
+            const loc = this._gl.getUniformLocation(this._program, info.name);
+            const setFuncs = this._uniformSetFuncMap.get(info.type);
+
+            this._uniformInfo.set(info.name, {
+                type: info.type,
+                size: info.type,
+                location: loc,
+                singleSetFunc: setFuncs[0],
+                multiSetFunc: setFuncs[1],
+            });
+        }
+    }
+
+    /** set a uniform by passing the values individually */
+    public setUniform(name: string, v0: number, v1?: number, v2?: number, v3?: number): void;
+    public setUniform(name: string, v0: boolean, v1?: boolean, v2?: boolean, v3?: boolean): void;
+    /** set a uniform by passing the values as an array */
+    public setUniform(name: string, values: ArrayBufferView | number[]): void;
+    public setUniform(name: string, ...values: (SingleSetParam | MultiSetParam)[]) {
+        const info = this._uniformInfo.get(name);
+        if (!info) return;
+        const firstArgIsArray = Array.isArray(values[0]) || ArrayBuffer.isView(values[0]);
+        if (arguments.length > 2 || !firstArgIsArray) {
+            info.singleSetFunc(info.location, ...(values as SingleSetParam[]));
+        } else {
+            info.multiSetFunc(info.location, (values as MultiSetParam[])[0]);
+        }
     }
 }

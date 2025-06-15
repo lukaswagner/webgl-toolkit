@@ -17,7 +17,7 @@ export class InvertPass extends FullscreenPass<typeof tracked> {
         const valid = super.initialize({ fragSrc });
 
         this._program.bind();
-        this._gl.uniform1i(this._program.getUniformLocation('u_input'), 0);
+        this._program.setUniform('u_input', 0);
         this._program.unbind();
 
         return valid;

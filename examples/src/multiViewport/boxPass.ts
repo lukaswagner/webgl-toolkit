@@ -70,15 +70,11 @@ export class BoxPass extends RenderPass<typeof tracked> implements CameraListene
     protected _setup(): void {
         this._program.bind();
 
-        if (this._dirty.get('Model')) {
-            this._gl.uniformMatrix4fv(
-                this._program.getUniformLocation('u_model'), false, this._model);
-        }
+        if (this._dirty.get('Model'))
+            this._program.setUniform('u_model', this._model);
 
-        if (this._dirty.get('ViewProjection')) {
-            this._gl.uniformMatrix4fv(
-                this._program.getUniformLocation('u_viewProjection'), false, this._viewProjection);
-        }
+        if (this._dirty.get('ViewProjection'))
+            this._program.setUniform('u_viewProjection', this._viewProjection);
 
         this._target.bind();
 
