@@ -22,7 +22,7 @@ export class BlurPass extends FullscreenPass<typeof tracked> {
 
     protected _initUniforms() {
         this._program.bind();
-        this._gl.uniform1i(this._program.uniforms.get('u_input'), 0);
+        this._gl.uniform1i(this._program.getUniformLocation('u_input'), 0);
         this._program.unbind();
     }
 

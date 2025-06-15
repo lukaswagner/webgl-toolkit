@@ -1,7 +1,5 @@
-import { Attributes } from './attributes';
 import { GL } from '../gl';
 import { replaceDefines } from './defines';
-import { Uniforms } from './uniforms';
 
 export class Program {
     protected _gl: GL;
@@ -23,8 +21,8 @@ export class Program {
     protected _program: WebGLProgram;
     protected _linked = false;
 
-    public uniforms: Uniforms;
-    public attributes: Attributes;
+    protected _uniformLocations = new Map<string, WebGLUniformLocation>();
+    protected _attributeLocations = new Map<string, GLint>();
 
     public constructor(gl: GL, name = 'unnamed program') {
         this._gl = gl;
@@ -116,8 +114,8 @@ export class Program {
             console.log(this._gl.getProgramInfoLog(this._program));
         }
 
-        this.uniforms = new Uniforms(this._gl, this._program);
-        this.attributes = new Attributes(this._gl, this._program);
+        this._uniformLocations = new Map<string, WebGLUniformLocation>();
+        this._attributeLocations = new Map<string, GLint>();
     }
 
     protected _getDefines() {
@@ -140,5 +138,23 @@ export class Program {
         return split
             .map((v, i) => `${(i + 1).toString().padStart(padding)}: ${v}`)
             .join('\n');
+    }
+
+    public getUniformLocation(key: string): WebGLUniformLocation {
+        let location = this._uniformLocations.get(key);
+        if (location === undefined) {
+            location = this._gl.getUniformLocation(this._program, key);
+            this._uniformLocations.set(key, location);
+        }
+        return location;
+    }
+
+    public getAttributeLocation(key: string): GLint {
+        let location = this._attributeLocations.get(key);
+        if (location === undefined) {
+            location = this._gl.getAttribLocation(this._program, key);
+            this._attributeLocations.set(key, location);
+        }
+        return location;
     }
 }
