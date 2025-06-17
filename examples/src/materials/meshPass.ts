@@ -7,7 +7,7 @@ import { mat4, vec3 } from 'gl-matrix';
 const tracked = {
     Target: true,
     Model: true,
-    ViewProjection: true,
+    Camera: true,
     Mesh: false,
     MaterialCount: false,
     Materials: false,
@@ -30,6 +30,7 @@ export class MeshPass extends RenderPass<typeof tracked> implements CameraListen
     protected _target: Framebuffer;
     protected _model: mat4;
     protected _viewProjection: mat4;
+    protected _eye: vec3;
     protected _program: Program;
 
     protected _geometry: WebGLVertexArrayObject;
@@ -54,7 +55,10 @@ export class MeshPass extends RenderPass<typeof tracked> implements CameraListen
 
         this._program = new Program(this._gl, 'mesh');
         this._program.vertSrc = require('./mesh.vert') as string;
-        this._program.fragSrc = require('./mesh.frag') as string;
+        this._program.fragSrc = [
+            require('./mesh.frag') as string,
+            require('./lighting.glsl') as string,
+        ];
         this._program.compile();
 
         return true;
@@ -141,8 +145,10 @@ export class MeshPass extends RenderPass<typeof tracked> implements CameraListen
         if (this._dirty.get('Model'))
             this._program.setUniform('u_model', this._model);
 
-        if (this._dirty.get('ViewProjection'))
+        if (this._dirty.get('Camera')) {
             this._program.setUniform('u_viewProjection', this._viewProjection);
+            this._program.setUniform('u_eye', this._eye);
+        }
 
         this._target.bind();
         this._materialUniform.bind();
@@ -173,7 +179,8 @@ export class MeshPass extends RenderPass<typeof tracked> implements CameraListen
 
     public cameraChanged(v: CameraMatrices) {
         this._viewProjection = v.viewProjection;
-        this._dirty.set('ViewProjection');
+        this._eye = v.eye;
+        this._dirty.set('Camera');
     }
 
     public set meshes(meshes: Mesh[]) {

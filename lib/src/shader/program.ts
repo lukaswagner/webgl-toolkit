@@ -51,13 +51,19 @@ export class Program {
         this._uniformSetFuncMap = getUniformSetFuncMap(gl);
     }
 
-    public set vertSrc(v: string) {
-        this._vertSrc = v;
+    public set vertSrc(v: string | string[]) {
+        if (Array.isArray(v))
+            this._vertSrc = v.join('\n');
+        else
+            this._vertSrc = v;
         this._vertCompiled = false;
     }
 
-    public set fragSrc(v: string) {
-        this._fragSrc = v;
+    public set fragSrc(v: string | string[]) {
+        if (Array.isArray(v))
+            this._fragSrc = v.join('\n');
+        else
+            this._fragSrc = v;
         this._fragCompiled = false;
     }
 
