@@ -63,6 +63,7 @@ export class Renderer<T extends Tracked = Tracked> {
                     pass.cameraChanged({
                         view, projection, viewProjection,
                         viewInverse, projectionInverse, viewProjectionInverse,
+                        eye: this._camera.eye, center: this._camera.center,
                     });
                 }
             }

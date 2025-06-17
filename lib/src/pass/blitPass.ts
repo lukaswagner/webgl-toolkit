@@ -1,5 +1,5 @@
 import { drawBuffer, Framebuffer } from '../framebuffer';
-import { GL } from '../gl';
+import { GL } from '../types';
 import { RenderPass } from './renderPass';
 
 const tracked = {

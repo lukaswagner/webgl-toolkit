@@ -6,8 +6,9 @@ import {
     SingleSetParam,
     UniformSetFuncMap,
 } from './uniformSetFunctionMap';
-import { GL } from '../gl';
+import { GL } from '../types';
 import { replaceDefines } from './defines';
+import { UniformBlock } from './uniformBlock';
 
 type UniformInfo = {
     type: number;
@@ -41,6 +42,8 @@ export class Program {
 
     protected _uniformSetFuncMap: UniformSetFuncMap;
     protected _uniformInfo = new Map<string, UniformInfo>();
+
+    protected _nextBlockBinding = 0;
 
     public constructor(gl: GL, name = 'unnamed program') {
         this._gl = gl;
@@ -205,5 +208,12 @@ export class Program {
         } else {
             info.multiSetFunc(info.location, (values as MultiSetParam[])[0]);
         }
+    }
+
+    public createUniformBlock(
+        name: string, members: string[], data?: Float32Array, logInfo = false
+    ) {
+        return new UniformBlock(
+            this._gl, this._program, name, members, this._nextBlockBinding++, data, logInfo);
     }
 }

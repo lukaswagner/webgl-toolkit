@@ -1,4 +1,4 @@
-import { mat4 } from 'gl-matrix';
+import { mat4, vec3 } from 'gl-matrix';
 
 export type CameraMatrices = {
     view: mat4;
@@ -7,6 +7,8 @@ export type CameraMatrices = {
     viewInverse: mat4;
     projectionInverse: mat4;
     viewProjectionInverse: mat4;
+    eye: vec3;
+    center: vec3;
 };
 
 export interface CameraListenerPass {

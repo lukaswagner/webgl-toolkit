@@ -1,5 +1,5 @@
 import { BufferMode, Texture2D } from '../texture';
-import { GL } from '../gl';
+import { GL } from '../types';
 import { vec2 } from 'gl-matrix';
 
 type ClearFunc = () => void;

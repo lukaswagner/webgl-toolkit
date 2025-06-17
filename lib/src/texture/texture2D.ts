@@ -1,4 +1,4 @@
-import { GL } from '../gl';
+import { GL } from '../types';
 import { TextureFormat } from './formats';
 import { vec2 } from 'gl-matrix';
 

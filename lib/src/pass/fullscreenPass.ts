@@ -1,6 +1,6 @@
 import { fullscreenFrag, fullscreenVert, Program } from '../shader';
 import { Framebuffer } from '../framebuffer';
-import { GL } from '../gl';
+import { GL } from '../types';
 import { RenderPass } from './renderPass';
 
 const tracked = {

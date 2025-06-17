@@ -1,4 +1,4 @@
-import { GL } from '../gl';
+import { GL } from '../types';
 
 /**
  * Enables a single draw buffer.

@@ -6,4 +6,4 @@ export * from './pass';
 export * from './renderer';
 export * from './shader';
 export * from './texture';
-export * from './gl';
+export * from './types';

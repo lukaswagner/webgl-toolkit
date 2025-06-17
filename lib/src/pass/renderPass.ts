@@ -1,5 +1,5 @@
 import { Dirty, DirtyInit } from '../data';
-import { GL } from '../gl';
+import { GL } from '../types';
 
 export abstract class RenderPass<T extends DirtyInit> {
     protected _gl: GL;

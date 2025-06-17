@@ -1,5 +1,5 @@
 import { Framebuffer } from './framebuffer';
-import { GL } from '../gl';
+import { GL } from '../types';
 import { vec2 } from 'gl-matrix';
 
 /**

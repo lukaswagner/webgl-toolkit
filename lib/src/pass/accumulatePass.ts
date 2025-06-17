@@ -1,6 +1,6 @@
 import { accumulateFrag } from '../shader';
 import { FullscreenPass } from './fullscreenPass';
-import { GL } from '../gl';
+import { GL } from '../types';
 import { Texture2D } from '../texture';
 
 const tracked = {
