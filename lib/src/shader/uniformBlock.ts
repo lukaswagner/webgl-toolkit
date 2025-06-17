@@ -2,75 +2,85 @@ import { GL, TypedArray } from '../types';
 
 type View = DataView | TypedArray;
 
+type MemberInfo = {
+    name: string;
+    index: number;
+    type: number;
+    offset: number;
+    stride: number;
+};
+
 export class UniformBlock {
     protected _gl: GL;
-    protected _program: WebGLProgram;
 
     // defined by user
     public name: string;
-    public members: string[];
     public binding: number;
 
     // derived / generated
     public data: View;
-    public location: number;
+    public blockIndex: number;
     public buffer: WebGLBuffer;
-    public bytes: number;
-    public indices: number[];
-    public offsets: number[];
+    public bytesSize: number;
+    public members: MemberInfo[];
 
     public constructor(
         gl: GL, program: WebGLProgram,
-        name: string, members: string[], binding: number,
+        name: string, binding: number,
         data?: View,
         log = false,
     ) {
         // store given values
         this._gl = gl;
-        this._program = program;
         this.name = name;
-        this.members = members.map((member) => `${name}.${member}`);
         this.binding = binding;
 
         // derive / generate members
-        this.location = gl.getUniformBlockIndex(program, name);
+        this.blockIndex = gl.getUniformBlockIndex(program, name);
 
-        this.bytes = gl.getActiveUniformBlockParameter(
-            program, this.location, gl.UNIFORM_BLOCK_DATA_SIZE);
+        this.bytesSize = gl.getActiveUniformBlockParameter(
+            program, this.blockIndex, gl.UNIFORM_BLOCK_DATA_SIZE);
 
-        this.data = data ?? new Float32Array(this.bytes / 4);
+        this.data = data ?? new Float32Array(this.bytesSize / 4);
 
         const b = gl.createBuffer();
         if (b === null) throw new Error('Could not create buffer.');
         this.buffer = b;
 
-        const i = gl.getUniformIndices(program, this.members);
-        if (i === null) throw new Error('Could not fetch indices.');
-        this.indices = i;
+        const indices: number[] = gl.getActiveUniformBlockParameter(
+            program, this.blockIndex, gl.UNIFORM_BLOCK_ACTIVE_UNIFORM_INDICES);
+        if (indices === null) throw new Error('Could not fetch indices.');
 
-        const o = gl.getActiveUniforms(program, i, gl.UNIFORM_OFFSET);
-        if (o === null) throw new Error('Could not fetch offsets.');
-        this.offsets = o;
+        const offsets: number[] = gl.getActiveUniforms(program, indices, gl.UNIFORM_OFFSET);
+        const strides: number[] = gl.getActiveUniforms(program, indices, gl.UNIFORM_ARRAY_STRIDE);
+
+        this.members = [];
+        indices.forEach((unformIndex, i) => {
+            const info = gl.getActiveUniform(program, unformIndex);
+            this.members.push({
+                index: unformIndex,
+                name: info.name,
+                type: info.type,
+                offset: offsets[i],
+                stride: strides[i],
+            });
+        });
 
         // configure
-        this._gl.uniformBlockBinding(program, this.location, binding);
+        this._gl.uniformBlockBinding(program, this.blockIndex, binding);
 
         if (log) {
             console.log('name:', name);
-            console.log('members:', this.members);
             console.log('binding:', binding);
-            console.log('location:', this.location);
-            console.log('bytes:', this.bytes);
-            console.log('data:', this.data);
-            console.log('buffer:', this.buffer);
-            console.log('indices:', this.indices);
-            console.log('offsets:', this.offsets);
+            console.log('bytes:', this.bytesSize);
+            console.log('blockIndex:', this.blockIndex);
+            console.log('members:', this.members);
         }
     }
 
     protected _uploadDataView(d: DataView) {
-        if (this.data.byteLength !== this.bytes) {
-            console.warn(`Invalid data length: expected ${this.bytes}, received ${this.data.byteLength}`);
+        if (this.data.byteLength !== this.bytesSize) {
+            console.warn(`Invalid data length: expected ${this.bytesSize}, received ${this.data.byteLength}`);
             return;
         }
 
@@ -81,16 +91,14 @@ export class UniformBlock {
 
     protected _uploadTypedArray(d: TypedArray, offset: number = 0, length?: number) {
         if (length === undefined) {
-            length = Math.min(d.length - offset, this.bytes / d.BYTES_PER_ELEMENT);
+            length = Math.min(d.length - offset, this.bytesSize / d.BYTES_PER_ELEMENT);
         }
 
         const byteLength = length * d.BYTES_PER_ELEMENT;
-        if (byteLength !== this.bytes) {
-            console.warn(`Invalid data length: expected ${this.bytes}, received ${byteLength}`);
+        if (byteLength !== this.bytesSize) {
+            console.warn(`Invalid data length: expected ${this.bytesSize}, received ${byteLength}`);
             return;
         }
-
-        console.log(`uploading ${d.byteLength}/${this.bytes}`);
 
         this._gl.bindBuffer(this._gl.UNIFORM_BUFFER, this.buffer);
         this._gl.bufferData(

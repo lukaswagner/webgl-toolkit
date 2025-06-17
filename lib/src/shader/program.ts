@@ -211,9 +211,9 @@ export class Program {
     }
 
     public createUniformBlock(
-        name: string, members: string[], data?: Float32Array, logInfo = false
+        name: string, data?: Float32Array, logInfo = false
     ) {
         return new UniformBlock(
-            this._gl, this._program, name, members, this._nextBlockBinding++, data, logInfo);
+            this._gl, this._program, name, this._nextBlockBinding++, data, logInfo);
     }
 }

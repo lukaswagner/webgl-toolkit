@@ -117,17 +117,20 @@ export class MeshPass extends RenderPass<typeof tracked> implements CameraListen
             if (this._materialUniform) this._materialUniform.delete();
             this._program.setDefine('MATERIAL_COUNT', this._materialCount);
             this._program.compile();
-            this._materialUniform = this._program.createUniformBlock(
-                'Materials', ['ambient', 'diffuse', 'specularShininess'], undefined, true);
+            this._materialUniform = this._program.createUniformBlock('Materials');
         }
 
         if (this._dirty.get('Materials')) {
             const data = this._materialUniform.data as Float32Array;
-            this._materials.forEach((v, i) => {
-                data.set(v.ambient, this._materialUniform.offsets[0] / 4 + i * 4);
-                data.set(v.diffuse, this._materialUniform.offsets[1] / 4 + i * 4);
-                data.set(v.specular, this._materialUniform.offsets[2] / 4 + i * 4);
-                data[this._materialUniform.offsets[2] / 4 + i * 4 + 3] = v.shininess;
+            this._materials.forEach((material, materialIndex) => {
+                const offset = (memberIndex: number): number => {
+                    const m = this._materialUniform.members[memberIndex];
+                    return (m.offset + materialIndex * m.stride) / Float32Array.BYTES_PER_ELEMENT;
+                };
+                data.set(material.ambient, offset(0));
+                data.set(material.diffuse, offset(1));
+                data.set(material.specular, offset(2));
+                data[offset(2) + 3] = material.shininess;
             });
 
             this._materialUniform.upload();

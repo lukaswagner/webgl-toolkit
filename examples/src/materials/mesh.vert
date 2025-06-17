@@ -14,12 +14,12 @@ uniform Materials {
     vec3 ambient[MATERIAL_COUNT];
     vec3 diffuse[MATERIAL_COUNT];
     vec4 specularShininess[MATERIAL_COUNT];
-} u_mat;
+};
 
 out vec3 v_color;
 
 void main()
 {
-    v_color = u_mat.diffuse[a_material].rgb;
+    v_color = diffuse[a_material].rgb;
     gl_Position = u_viewProjection * u_model * vec4(a_position, 1.0);
 }
