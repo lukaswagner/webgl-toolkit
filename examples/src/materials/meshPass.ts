@@ -57,7 +57,7 @@ export class MeshPass extends RenderPass<typeof tracked> implements CameraListen
         this._program.vertSrc = require('./mesh.vert') as string;
         this._program.fragSrc = [
             require('./mesh.frag') as string,
-            require('./lighting.glsl') as string,
+            require('./lighting.frag') as string,
         ];
         this._program.compile();
 

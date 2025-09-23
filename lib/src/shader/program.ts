@@ -99,7 +99,9 @@ export class Program {
         if (!this._vert)
             this._vert = this._gl.createShader(this._gl.VERTEX_SHADER);
 
-        const src = replaceDefines(this._vertSrc, this._getDefines());
+        let src = replaceDefines(this._vertSrc, this._getDefines());
+        if(!src.startsWith('#version'))
+            src = '#version 300 es\n' + src;
         this._gl.shaderSource(this._vert, src);
         this._gl.compileShader(this._vert);
         this._vertCompiled = this._gl.getShaderParameter(this._vert, this._gl.COMPILE_STATUS);
@@ -115,7 +117,9 @@ export class Program {
         if (!this._frag)
             this._frag = this._gl.createShader(this._gl.FRAGMENT_SHADER);
 
-        const src = replaceDefines(this._fragSrc, this._getDefines());
+        let src = replaceDefines(this._fragSrc, this._getDefines());
+        if(!src.startsWith('#version'))
+            src = '#version 300 es\n' + src;
         this._gl.shaderSource(this._frag, src);
         this._gl.compileShader(this._frag);
         this._fragCompiled = this._gl.getShaderParameter(this._frag, this._gl.COMPILE_STATUS);

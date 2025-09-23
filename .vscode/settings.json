@@ -1,0 +1,7 @@
+{
+    "webgl-glsl-editor.codeInjectionSource": [
+        "#version 300 es",
+        "precision highp float;"
+    ],
+    "webgl-glsl-editor.codeInjection": true
+}

@@ -13,7 +13,7 @@ export enum FragmentLocation {
 }
 
 type Options = {
-    fragSrc?: string;
+    fragSrc?: string | string[];
 };
 
 export class FullscreenPass<T extends Tracked = Tracked> extends RenderPass<T> {
