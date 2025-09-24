@@ -1,4 +1,6 @@
-import { CameraListenerPass, CameraMatrices, FullscreenPass, GL, UniformBlock } from '@lukaswagner/webgl-toolkit';
+import {
+    CameraListenerPass, CameraMatrices, FullscreenPass, GL, UniformBlock,
+} from '@lukaswagner/webgl-toolkit';
 import { mat4, vec3 } from 'gl-matrix';
 
 const tracked = {
@@ -13,13 +15,16 @@ type Sphere = {
     roughness?: number;
     emissiveColor?: vec3;
     emissiveStrength?: number;
-}
+};
 
 const spheres: Sphere[] = [
-    { position: [0, 0, 0], radius: 0.25, emissiveColor: [1, 1, 1], emissiveStrength: 1 },
-    { position: [1, 0, 0], radius: 0.15, diffuseColor: [1, 0, 0] },
-    { position: [0, 1, 0], radius: 0.15, diffuseColor: [0, 1, 0] },
-    { position: [0, 0, 1], radius: 0.15, diffuseColor: [0, 0, 1] },
+    { position: [0, 0, 0], radius: 0.5, emissiveColor: [1, 1, 1], emissiveStrength: 1 },
+    { position: [1, 0, 0], radius: 0.25, diffuseColor: [1, 0.5, 0.5] },
+    { position: [0, 1, 0], radius: 0.25, diffuseColor: [0.5, 1, 0.5] },
+    { position: [0, 0, 1], radius: 0.25, diffuseColor: [0.5, 0.5, 1] },
+    { position: [-1, 0, 0], radius: 0.25, diffuseColor: [0.5, 1, 1] },
+    { position: [0, -1, 0], radius: 0.25, diffuseColor: [1, 0.5, 1] },
+    { position: [0, 0, -1], radius: 0.25, diffuseColor: [1, 1, 0.5] },
 ];
 
 export class RaytracingPass extends FullscreenPass<typeof tracked> implements CameraListenerPass {
@@ -38,11 +43,17 @@ export class RaytracingPass extends FullscreenPass<typeof tracked> implements Ca
             require('./sphere.frag') as string,
         ] });
 
+        this._program.setDefine('MAX_BOUNCE', 5);
+
         this._program.setDefine('SPHERE_COUNT', spheres.length);
         this._program.compile();
         this._spheres = this._program.createUniformBlock('Spheres', undefined, true);
         this._spheres.data = this._getSphereData();
         this._spheres.upload();
+
+        this._program.bind();
+        this._program.setUniform('u_ambient', [0.25, 0.25, 0.25]);
+        this._program.unbind();
 
         return valid;
     }
@@ -96,7 +107,7 @@ export class RaytracingPass extends FullscreenPass<typeof tracked> implements Ca
         const diffuseOffset = this._spheres.members[1].offset / byteSize;
         const emissiveOffset = this._spheres.members[2].offset / byteSize;
 
-        for(let i = 0; i < spheres.length; i++) {
+        for (let i = 0; i < spheres.length; i++) {
             const sphere = spheres[i];
 
             const position = positionOffset + i * 4;
@@ -105,13 +116,14 @@ export class RaytracingPass extends FullscreenPass<typeof tracked> implements Ca
 
             const diffuse = diffuseOffset + i * 4;
             buffer.set(sphere.diffuseColor ?? [0, 0, 0], diffuse);
-            buffer[diffuse + 1] = sphere.roughness ?? 0;
+            buffer[diffuse + 3] = sphere.roughness ?? 0;
 
             const emissive = emissiveOffset + i * 4;
             buffer.set(sphere.emissiveColor ?? [0, 0, 0], emissive);
-            buffer[emissive + 1] = sphere.emissiveStrength ?? 0;
+            buffer[emissive + 3] = sphere.emissiveStrength ?? 0;
         }
 
+        console.log(buffer);
         return buffer;
     }
 }

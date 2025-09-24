@@ -34,3 +34,20 @@ void intersectSpheres(vec3 origin, vec3 direction, inout float minDistance, inou
         }
     }
 }
+
+void bounceSphere
+(
+    inout vec3 origin, inout vec3 direction,
+    float distance, int hitIndex,
+    out vec3 color, out vec4 emissive
+)
+{
+    color = u_spheres.colorRoughness[hitIndex].rgb;
+    emissive = u_spheres.emissive[hitIndex];
+
+    vec3 center = u_spheres.centerRadius[hitIndex].xyz;
+    vec3 hitPos = origin + direction * distance;
+    vec3 normal = normalize(hitPos - center);
+    direction = reflect(direction, normal);
+    origin = hitPos;
+}
