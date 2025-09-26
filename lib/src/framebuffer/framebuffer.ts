@@ -107,7 +107,7 @@ export class Framebuffer {
     public set size(v) {
         this._size = v;
         for (const attachment of this._attachments)
-            attachment.texture.resize(this._size);
+            attachment.texture.size = this._size;
     }
 
     public get attachments() {

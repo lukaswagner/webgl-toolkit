@@ -14,6 +14,7 @@ export class Texture2D {
     protected _gl: GL;
     protected _format: TextureFormat;
     protected _bufferMode: BufferMode;
+    protected _size: vec2;
     protected _handle: WebGLTexture;
     protected _double: WebGLTexture;
 
@@ -32,22 +33,38 @@ export class Texture2D {
         this.minFilter = this._gl.NEAREST;
         this.magFilter = this._gl.NEAREST;
 
-        this.resize([1, 1]);
+        this.size = [1, 1];
     }
 
-    protected _resize(handle: WebGLTexture, size: vec2) {
+    protected _resize(handle: WebGLTexture) {
         this._gl.bindTexture(this._gl.TEXTURE_2D, handle);
         this._gl.texImage2D(
             this._gl.TEXTURE_2D, 0, this._format.internalFormat,
-            size[0], size[1],
+            this._size[0], this._size[1],
             0, this._format.format, this._format.type, undefined);
         this._gl.bindTexture(this._gl.TEXTURE_2D, null);
     }
 
-    public resize(size: vec2) {
-        this._resize(this._handle, size);
+    public set size(size: vec2) {
+        this._size = size;
+        this._resize(this._handle);
         if (this._bufferMode === BufferMode.Double)
-            this._resize(this._double, size);
+            this._resize(this._double);
+    }
+
+    protected _setData(handle: WebGLTexture, data: ArrayBufferView) {
+        this._gl.bindTexture(this._gl.TEXTURE_2D, handle);
+        this._gl.texImage2D(
+            this._gl.TEXTURE_2D, 0, this._format.internalFormat,
+            this._size[0], this._size[1],
+            0, this._format.format, this._format.type, data);
+        this._gl.bindTexture(this._gl.TEXTURE_2D, null);
+    }
+
+    public set data(data: ArrayBufferView) {
+        this._setData(this._handle, data);
+        if (this._bufferMode === BufferMode.Double)
+            this._setData(this._double, data);
     }
 
     public get readHandle() {

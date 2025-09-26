@@ -7,6 +7,8 @@ uniform Spheres {
     vec4 emissive[SPHERE_COUNT];
 } u_spheres;
 
+vec3 roughReflect(vec3 dir, vec3 normal, float roughness);
+
 bool intersectSphere(vec3 origin, vec3 direction, vec4 sphere, out float t)
 {
     vec3 offsetRay = origin - sphere.xyz;
@@ -42,12 +44,13 @@ void bounceSphere
     out vec3 color, out vec4 emissive
 )
 {
-    color = u_spheres.colorRoughness[hitIndex].rgb;
+    vec4 colorRoughness = u_spheres.colorRoughness[hitIndex];
+    color = colorRoughness.rgb;
     emissive = u_spheres.emissive[hitIndex];
 
     vec3 center = u_spheres.centerRadius[hitIndex].xyz;
     vec3 hitPos = origin + direction * distance;
     vec3 normal = normalize(hitPos - center);
-    direction = reflect(direction, normal);
+    direction = roughReflect(direction, normal, colorRoughness.w);
     origin = hitPos;
 }

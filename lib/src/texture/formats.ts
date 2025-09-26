@@ -28,6 +28,11 @@ export namespace TextureFormats {
         type: WebGL2RenderingContext.HALF_FLOAT,
         internalFormat: WebGL2RenderingContext.RGBA16F,
     };
+    export const R32F: TextureFormat = {
+        format: WebGL2RenderingContext.RED,
+        type: WebGL2RenderingContext.FLOAT,
+        internalFormat: WebGL2RenderingContext.R32F,
+    };
     export const RGBA32F: TextureFormat = {
         format: WebGL2RenderingContext.RGBA,
         type: WebGL2RenderingContext.FLOAT,
